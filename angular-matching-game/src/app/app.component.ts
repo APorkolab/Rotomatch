@@ -52,6 +52,7 @@ export class AppComponent implements OnInit {
   //A játék újraindításakor nincs szükség annak vizsgálatára, hogy játszottunk-e már? Lehetséges továbbfejlesztés: megerősítő felugró ablak.
   restartGame() {
     this.shuffleCards();
+    this.currentResult = 0;
   }
 
   //A kártya kiválasztása. Vizsgáljuk a kártya azonosságát.
@@ -123,6 +124,7 @@ export class AppComponent implements OnInit {
       this.IsItStarted = false;
       this.ThereIsEndedGame = true;
       this.checktheBestResult(this.currentResult);
+      this.currentResult = 0;
     }
   }
 }
