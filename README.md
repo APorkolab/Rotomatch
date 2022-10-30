@@ -1,4 +1,4 @@
-# angular-matching-game
+# MatchingGameAngular
 
 Your task is to build a simple card-matching game, the kind that your brother/sister/best friend always cheated at when you were little. In case you need a reminder, here’s how it should work:
 
@@ -28,3 +28,16 @@ You need to deliver a working game that we can play through until the end, other
 We’ll be expecting your submission via a GitHub link. _Please commit regularly, at least after each feature while you work._
 
 You have five hours, starting now.
+
+Evaluation:
+
+"A feladat megvalósítása közben több feature implementálása sem történt meg vagy hibásan lett megvalósítva, ilyen pl.:
+
+- Deck választó
+- Játék állapot mentése (localStorage használata pl.)
+
+A UI szépen lett megvalósítva, többé kevésbé követte a feladatban elvártakat és igazodott a mintaként küldött felülethez, emellett a csatolt anyagokat is felhasználta és a reszponzív megjelenés is támogatott volt (itt néhol voltak elcsúszó elemek).
+A választott keretrendszer (Angular) ugyan jó döntés volt a feladat megoldására, viszont a routing teljes mellőzése nagyon bad practice. Emiatt egyetlen fő komponensbe lett összezsúfolva az összes page.
+
+A styling ugyan Sass-t használt viszont az implementációban egyáltalán nem voltak kihasználva az adottságait, gondolok itt pl.: nesting.
+Ugyan a TypeScript használata megvalósult viszont rengeteg helyen volt any illetve sok helyen hiányoztak call signiture-ök emellett nincsenek interface-ek, enum-ok használva."
