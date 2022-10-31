@@ -11,6 +11,7 @@ import { ContactComponent } from './page/contact/contact.component';
 import { HomeComponent } from './page/home/home.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -22,9 +23,10 @@ import { CommonModule } from '@angular/common';
 
   ],
   imports: [
+    AppRoutingModule,
+    HttpClientModule,
     BrowserModule,
     RouterModule,
-    AppRoutingModule,
     CommonModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot({

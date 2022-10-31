@@ -1,7 +1,7 @@
 import { NotificationService } from './../../service/notification.service';
 import { Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChildren, OnChanges } from '@angular/core';
 import { Card } from 'src/app/model/card';
-import { count } from 'console';
+import { HomeComponent } from '../home/home.component';
 
 @Component({
   selector: 'app-game',
@@ -12,18 +12,25 @@ export class GameComponent implements OnInit {
   // oneCard!: Card;
   // selectedCard = new EventEmitter<any>();
 
+
   isItAFlippedCard: boolean = false;
-  @ViewChildren(Card) cardComponents!: QueryList<Card>;
+  @ViewChildren(HomeComponent) homeComponent!: HomeComponent;
+
+
+
+
+
+
   cardList: Card[] = [];
   twoCard: Card[] = [];
   IsItStarted = false;
   firstCard!: Card | null;
   secondCard!: Card | null;
   ThereIsEndedGame = false;
-  bestResult: number = 0;
-  currentResult: number = 0;
-  deckSize: number = 20;
-  counter: number = 0;
+  bestResult = 1;
+  currentResult = 1;
+  deckSize!: number;
+  counter = 0;
   listOfAllCard: Card[] = [
     {
       id: 1,
@@ -166,16 +173,24 @@ export class GameComponent implements OnInit {
       matched: false,
     },
   ];
-  cards: any;
 
 
-  constructor(private notification: NotificationService) { }
+  constructor(private notification: NotificationService) {
+
+
+  }
 
   ngOnInit(): void {
-    this.shuffleCards(20);
-    console.log("FirstCard:" + this.firstCard);
-    console.log('SecondCard:' + this.secondCard);
+    this.shuffleCards(this.deckSize);
+    console.log("Size of the deck:" + this.deckSize);
+    // console.log("Deck at the beginning:" + this.cardList);
   }
+
+  ngAfterViewInit() {
+    this.deckSize = this.homeComponent.selectedDeckSize;
+    console.log('értéket kap:' + this.deckSize);
+  }
+
 
   // ngOnChanges(changes: SimpleChanges) {
   //   if (changes['cardDetails'] && changes['cardDetails'].currentValue) {
@@ -184,29 +199,27 @@ export class GameComponent implements OnInit {
   //   }
   // }
 
-  //Betöltjük a kártyák listáját, majd randomizált sorrendben rakjuk vissza a pakliban.
+  //Betöltjük a kártyák listáját, majd randomizált sorrendben rakjuk vissza a pakliba.
   shuffleCards(deckSize: number) {
     let cards: Card[] = this.listOfAllCard;
-    let currentIndex: number;
     let randomIndex: number;
-    if (deckSize % 2 == 0) {
-      currentIndex = deckSize;
-      cards.slice(20 - (deckSize - 1));
+    if (deckSize % 2 == 0 && deckSize !== 0) {
       this.notification.showSuccess('The size (' + deckSize + ') of the deck is correct, because it is even. Therefore the decksize has been set.', 'Matching Game v.1.0.0');
     } else {
-      currentIndex = 20;
+      deckSize = 20;
       this.notification.showError('The size of the deck is incorrect, because it is not even. The decksize will be 20.', 'Matching Game v.1.0.0')
     }
-    while (currentIndex != 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-      [cards[currentIndex], cards[randomIndex]] = [
+    cards.length = deckSize;
+    while (deckSize != 0) {
+      randomIndex = Math.floor(Math.random() * deckSize);
+      deckSize--;
+      [cards[deckSize], cards[randomIndex]] = [
         cards[randomIndex],
-        cards[currentIndex],
+        cards[deckSize],
       ];
     }
     this.cardList = cards;
-    console.log(this.cardList);
+    console.log('tarara' + this.cardList);
   }
 
   //Játékkezedet kártyakeveréssel
@@ -221,28 +234,6 @@ export class GameComponent implements OnInit {
   restartGame() {
     this.shuffleCards(this.deckSize);
     this.currentResult = 0;
-  }
-
-  //A kártya kiválasztása. Vizsgáljuk a kártya azonosságát.
-  onCardSelect(selectedCard: Card) {
-    // this.cardList.forEach((card) => {
-    //   if (card.id === selectedCard.id) {
-    //     card.flipped = true;
-    //     // selectedCard.flipped = true;
-    //   }
-    // });
-
-    // if (!this.firstCard) {
-    //   this.firstCard = selectedCard;
-
-    // } else if (this.firstCard && !this.secondCard) {
-    //   this.secondCard = selectedCard;
-
-    // }
-    // if (this.firstCard && this.secondCard) {
-    //   this.checkCards();
-    // }
-
   }
 
   //A legjobb kirakási eredmény vizsgálata.
@@ -285,6 +276,7 @@ export class GameComponent implements OnInit {
       this.ThereIsEndedGame = true;
       this.checktheBestResult(this.currentResult);
       this.currentResult = 0;
+      this.notification.showSuccess('You have won! Click the restart button, if you would like to play an another game.', 'Matching Game v.1.0.0')
     }
   }
 
