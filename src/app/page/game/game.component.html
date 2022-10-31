@@ -1,1 +1,28 @@
-<p>game works!</p>
+<h1 class="mainTitle mt-5" *ngIf="!IsItStarted">Splendex Memory Game</h1>
+
+<!-- <ul class="nav justify-content-center" *ngIf="IsItStarted">
+
+	<li class="nav-item">
+		<div>Current tries:{{currentResult}}</div>
+	</li>
+	<li class="nav-item">
+		<div>Best: {{bestResult}}</div>
+	</li>
+
+	<li class="nav-item">
+		<button type="button" class="btn btn-light" (click)="restartGame()">Restart</button>
+	</li>
+</ul> -->
+
+
+<!-- <section class="game-section" *ngIf="IsItStarted"> -->
+<section class="cardContainer">
+	<div *ngFor="let card of cardList">
+		<div *ngIf="card.flipped" class="card card-front" (click)="revealTheCard(card)"
+			[ngClass]="{'card-matched': card.matched}">
+			<img src="{{card.icon}}" alt="icon of the card">
+		</div>
+		<div *ngIf="!card.flipped" class="card card-back" (click)="revealTheCard(card)"></div>
+	</div>
+
+</section>
