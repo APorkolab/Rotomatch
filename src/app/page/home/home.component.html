@@ -5,7 +5,7 @@
 		<label>Deck size:</label>
 		<br>
 		<select class="form-select-lg mb-4 mx-2" aria-label="Please, select the size of the deck." #deckSize
-			(change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize" id="deck-select">
+			(change)="Select(deckSize.value)" name="deckSize" id="deck-select">
 			<!-- <select class="form-control" #deckSize (change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize"
 			id="deck-select"> -->
 			<!-- <option [value]="option" *ngFor="let option of validDeckSizes">{{option}}</option> -->

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { elementAt } from 'rxjs';
 import { GameComponent } from './page/game/game.component';
+import { CardService } from './service/card.service';
 
 @Component({
   selector: 'app-root',
@@ -10,10 +11,13 @@ import { GameComponent } from './page/game/game.component';
 export class AppComponent {
   title = 'MatchingGameAngular';
 
-  constructor() {
+  constructor(private data: CardService) {
 
   }
 
+  Select(value: string) {
+    this.data.onSelected(this.data.ConvertStringToNumber(value))
+  }
 
   //possible update to get maxDeckSize from Game component
 }

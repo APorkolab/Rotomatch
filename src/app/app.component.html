@@ -34,15 +34,30 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-md-0">
 
-        <!-- <li class="nav-item">
-          <div>Current tries:{{game.currentResult}}</div>
+        <li class="nav-item">
+          <div><label>Deck size:</label>
+            <br>
+            <select class="form-select-lg mb-4 mx-2" aria-label="Please, select the size of the deck." #deckSize
+              (change)="Select(deckSize.value)" name="deckSize" id="deck-select">
+              <!-- <select class="form-control" #deckSize (change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize"
+          			id="deck-select"> -->
+              <!-- <option [value]="option" *ngFor="let option of validDeckSizes">{{option}}</option> -->
+              <option selected>Open this select menu</option>
+              <option value="20">20</option>
+              <option value="18">18</option>
+              <option value="16">16</option>
+              <option value="14">14</option>
+              <option value="12">12</option>
+              <option value="10">10</option>
+              <option value="8">8</option>
+              <option value="6">6</option>
+              <option value="4">4</option>
+              <option value="2">2</option>
+            </select>
+          </div>
         </li>
-        <li class="nav-item">
-          <div>Best: {{game.bestResult}}</div>
-        </li> -->
-
-        <li class="nav-item">
-          <!-- <button type="button" class="btn btn-light" (click)="gameComponent.restartGame()">Restart</button> -->
+        <li class="nav-item col-3">
+          <div><button class="btn btn-danger" [routerLink]="'/game'">START NEW GAME</button></div>
         </li>
       </ul>
     </div>
@@ -96,11 +111,21 @@
   </router-outlet>
 </div>
 
-
-
-<!-- 
-        <footer class="footer mt-auto py-3 bg-light">
-          <div class="container">
-            <span class="text-muted">Place sticky footer content here.</span>
-          </div>
-        </footer> -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="confirmModalLabel">Begin a new game?</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        If you click 'yes', your current results will be deleted.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="restartGame()">New game</button> -->
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">New game</button>
+      </div>
+    </div>
+  </div>
+</div>

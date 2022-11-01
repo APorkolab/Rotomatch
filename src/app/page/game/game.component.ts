@@ -203,10 +203,11 @@ export class GameComponent implements OnInit {
   restartGame() {
     this.data.changeNewGameWanted(true);
     this.data.changeSelectedDeckSize(this.deckSize);
-    this.startGame();
     this.localStorageClear();
+    this.startGame();
     this.ThereIsEndedGame = false;
     this.currentResult = 0;
+    this.counter = 0;
   }
 
   //Betöltjük a kártyák listáját, majd randomizált sorrendben rakjuk vissza a pakliba.
@@ -229,10 +230,10 @@ export class GameComponent implements OnInit {
       ];
     }
     this.cardList = cards;
+    this.cardList.map(card => card.flipped = false)
+    this.cardList.map(card => card.matched = false)
     this.data.changeNewGameWanted(false);
   }
-
-
 
   //A megtalált kártyák szettere.
   setCardToMatched(card1: Card, card2: Card) {

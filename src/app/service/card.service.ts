@@ -23,4 +23,17 @@ export class CardService {
   changeNewGameWanted(value: boolean) {
     this.newGameWanted.next(value);
   }
+
+
+  onSelected(value: number,): void {
+    // this.selectedDeckSize = value;
+    this.changeSelectedDeckSize(value);
+    this.changeNewGameWanted(true);
+  }
+
+  ConvertStringToNumber(input: string) {
+    let numeric = Number(input);
+    return numeric;
+  }
+
 }

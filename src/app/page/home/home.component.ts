@@ -16,14 +16,8 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onSelected(value: number,): void {
-    // this.selectedDeckSize = value;
-    this.data.changeSelectedDeckSize(value);
-    this.data.changeNewGameWanted(true);
+  Select(value: string) {
+    this.data.onSelected(this.data.ConvertStringToNumber(value))
   }
 
-  ConvertStringToNumber(input: string) {
-    let numeric = Number(input);
-    return numeric;
-  }
 }
