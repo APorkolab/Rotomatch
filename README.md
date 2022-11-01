@@ -1,4 +1,4 @@
-# MatchingGameAngular
+# MatchingGameAngular v.1.0.0.
 
 Your task is to build a simple card-matching game, the kind that your brother/sister/best friend always cheated at when you were little. In case you need a reminder, here’s how it should work:
 

@@ -1,10 +1,9 @@
 import { NotificationService } from './../../service/notification.service';
 import { Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChildren, OnChanges } from '@angular/core';
 import { Card } from 'src/app/model/card';
-import { HomeComponent } from '../home/home.component';
 import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/service/card.service';
-import { threadId } from 'worker_threads';
+import { Router, RouterModule, Routes } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -171,8 +170,7 @@ export class GameComponent implements OnInit {
     },
   ];
 
-
-  constructor(private notification: NotificationService, private data: CardService) {
+  constructor(private notification: NotificationService, private data: CardService, private router: Router) {
   }
 
 
@@ -181,9 +179,16 @@ export class GameComponent implements OnInit {
     this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
     this.bestResult = Number(localStorage.getItem('bestResult'));
     this.startGame();
+    if (!this.deckSize) {
+      this.notification.showError('There is no data of decksize. Please, reset the application or wait 2 seconds.', 'Matching Game v.1.0.0');
+      setTimeout(() => {
+        this.router.navigate(['/'])
+      }, 2000);
+    };
     // console.log("Size of the deck:" + this.deckSize);
   }
 
+  //Játékkezedet kártyakeveréssel vagy a parti visszaállításával
   startGame() {
     if (this.ThereIsEndedGame || this.newGameWanted) {
       this.shuffleCards(this.deckSize);
@@ -226,21 +231,7 @@ export class GameComponent implements OnInit {
     this.data.changeNewGameWanted(false);
   }
 
-  //Játékkezedet kártyakeveréssel
 
-
-
-
-  //A legjobb kirakási eredmény vizsgálata.
-  checktheBestResult(currentResult: number): number {
-    if (currentResult != 0 && currentResult > this.bestResult) {
-      this.bestResult = currentResult;
-      localStorage.setItem('bestResult', JSON.stringify(this.bestResult));
-
-    }
-    this.currentResult = 0;
-    return this.bestResult;
-  }
 
   //A megtalált kártyák szettere.
   setCardToMatched(card1: Card, card2: Card) {
@@ -262,18 +253,6 @@ export class GameComponent implements OnInit {
     }, 1000);
   }
 
-
-  //A játék kijátszását ellenőrzi.
-  checkGameStatus() {
-    const unmatchedCard = this.cardList.find((card) => !card.matched);
-    if (!unmatchedCard) {
-      this.IsItStarted = false;
-      this.ThereIsEndedGame = true;
-      this.checktheBestResult(this.currentResult);
-      this.currentResult = 0;
-      this.notification.showSuccess('You have won! Click the restart button, if you would like to play an another game.', 'Matching Game v.1.0.0')
-    }
-  }
 
   revealTheCard(selectedCard: Card) {
     if (!selectedCard.flipped && this.counter >= 0 && this.counter <= 1) {
@@ -308,6 +287,29 @@ export class GameComponent implements OnInit {
     }
     this.counter = 0;
     this.twoCard.splice(0, this.twoCard.length)
+  }
+
+  //A játék kijátszását ellenőrzi.
+  checkGameStatus() {
+    const unmatchedCard = this.cardList.find((card) => !card.matched);
+    if (!unmatchedCard) {
+      this.IsItStarted = false;
+      this.ThereIsEndedGame = true;
+      this.checktheBestResult(this.currentResult);
+      this.currentResult = 0;
+      this.notification.showSuccess('You have won! Click the restart button, if you would like to play an another game.', 'Matching Game v.1.0.0')
+    }
+  }
+
+  //A legjobb kirakási eredmény vizsgálata.
+  checktheBestResult(currentResult: number): number {
+    if (currentResult != 0 && currentResult > this.bestResult) {
+      this.bestResult = currentResult;
+      localStorage.setItem('bestResult', JSON.stringify(this.bestResult));
+
+    }
+    this.currentResult = 0;
+    return this.bestResult;
   }
 
 

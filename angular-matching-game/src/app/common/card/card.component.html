@@ -1,5 +1,0 @@
-<div class="card card-front" *ngIf="isItAFlippedCard" (click)="revealTheCard()"
-  [ngClass]="{'card-matched': details.matched}">
-  <img src="{{details.icon}}" alt="icon of the card">
-</div>
-<div class="card card-back" *ngIf="!isItAFlippedCard" (click)="revealTheCard()"></div>
