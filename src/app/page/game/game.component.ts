@@ -2,6 +2,8 @@ import { NotificationService } from './../../service/notification.service';
 import { Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChildren, OnChanges } from '@angular/core';
 import { Card } from 'src/app/model/card';
 import { HomeComponent } from '../home/home.component';
+import { Subscription } from 'rxjs';
+import { CardService } from 'src/app/service/card.service';
 
 @Component({
   selector: 'app-game',
@@ -9,12 +11,11 @@ import { HomeComponent } from '../home/home.component';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
-  // oneCard!: Card;
-  // selectedCard = new EventEmitter<any>();
+  deckSize!: number;
+  deckSizeSubscription!: Subscription;
 
-
-  isItAFlippedCard: boolean = false;
-  @ViewChildren(HomeComponent) homeComponent!: HomeComponent;
+  newGameWanted!: boolean;
+  newGameWantedSubscription!: Subscription;
 
 
 
@@ -29,7 +30,7 @@ export class GameComponent implements OnInit {
   ThereIsEndedGame = false;
   bestResult = 1;
   currentResult = 1;
-  deckSize!: number;
+
   counter = 0;
   listOfAllCard: Card[] = [
     {
@@ -175,29 +176,26 @@ export class GameComponent implements OnInit {
   ];
 
 
-  constructor(private notification: NotificationService) {
+  constructor(private notification: NotificationService, private data: CardService) {
 
 
   }
 
   ngOnInit(): void {
-    this.shuffleCards(this.deckSize);
+    this.deckSizeSubscription = this.data.currentselectedDeckSize.subscribe(deckSize => this.deckSize = deckSize)
+    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
+
+    if (this.ThereIsEndedGame || !this.newGameWanted) {
+      this.shuffleCards(this.deckSize);
+      // this.localStorageClear();
+    } else {
+      this.localStorageRestore();
+    }
+    this.IsItStarted = true;
     console.log("Size of the deck:" + this.deckSize);
     // console.log("Deck at the beginning:" + this.cardList);
   }
 
-  ngAfterViewInit() {
-    this.deckSize = this.homeComponent.selectedDeckSize;
-    console.log('értéket kap:' + this.deckSize);
-  }
-
-
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['cardDetails'] && changes['cardDetails'].currentValue) {
-  //     this.oneCard = changes['cardDetails'].currentValue;
-  //     this.isItAFlippedCard = this.oneCard.flipped;
-  //   }
-  // }
 
   //Betöltjük a kártyák listáját, majd randomizált sorrendben rakjuk vissza a pakliba.
   shuffleCards(deckSize: number) {
@@ -207,7 +205,7 @@ export class GameComponent implements OnInit {
       this.notification.showSuccess('The size (' + deckSize + ') of the deck is correct, because it is even. Therefore the decksize has been set.', 'Matching Game v.1.0.0');
     } else {
       deckSize = 20;
-      this.notification.showError('The size of the deck is incorrect, because it is not even. The decksize will be 20.', 'Matching Game v.1.0.0')
+      this.notification.showError('The size of the deck is incorrect, because it is not even or null/undefined. The decksize will be 20.', 'Matching Game v.1.0.0')
     }
     cards.length = deckSize;
     while (deckSize != 0) {
@@ -219,19 +217,15 @@ export class GameComponent implements OnInit {
       ];
     }
     this.cardList = cards;
-    console.log('tarara' + this.cardList);
+
   }
 
   //Játékkezedet kártyakeveréssel
-  startGame() {
-    if (this.ThereIsEndedGame) {
-      this.shuffleCards(this.deckSize);
-    }
-    this.IsItStarted = true;
-  }
+
 
   //A játék újraindításakor nincs szükség annak vizsgálatára, hogy játszottunk-e már? Lehetséges továbbfejlesztés: megerősítő felugró ablak.
   restartGame() {
+    this.data.changeNewGameWanted(true);
     this.shuffleCards(this.deckSize);
     this.currentResult = 0;
   }
@@ -264,7 +258,7 @@ export class GameComponent implements OnInit {
   flipCardsBack() {
     setTimeout(() => {
       this.hideTheCard();
-    }, 1000);
+    }, 500);
   }
 
 
@@ -292,7 +286,6 @@ export class GameComponent implements OnInit {
     }
 
   }
-  // this.counter = 0;
 
   checkCards() {
     if (
@@ -305,7 +298,7 @@ export class GameComponent implements OnInit {
       this.flipCardsBack();
       this.currentResult = this.currentResult + 1;
     }
-
+    this.localStorageStore(this.cardList);
   }
 
   hideTheCard() {
@@ -318,6 +311,21 @@ export class GameComponent implements OnInit {
     // if (this.firstCard != null && this.secondCard != null) {
     //   selectedCard.flipped = false;
     // }
+  }
+
+
+  localStorageStore(cardList: Card[]) {
+    this.localStorageClear();
+    cardList.map(card => localStorage.setItem('cards', JSON.stringify(cardList)));
+  }
+
+  localStorageRestore() {
+    this.cardList.splice(0, this.cardList.length);
+    this.cardList = JSON.parse(localStorage.getItem("cards")!);
+  }
+
+  localStorageClear() {
+    localStorage.removeItem("cards");
   }
 
 }
