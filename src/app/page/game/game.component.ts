@@ -17,21 +17,16 @@ export class GameComponent implements OnInit {
   newGameWanted!: boolean;
   newGameWantedSubscription!: Subscription;
 
-
-
-
-
-
   cardList: Card[] = [];
   twoCard: Card[] = [];
   IsItStarted = false;
-  firstCard!: Card | null;
-  secondCard!: Card | null;
   ThereIsEndedGame = false;
-  bestResult = 1;
-  currentResult = 1;
 
+  bestResult = 0;
+  currentResult = 0;
   counter = 0;
+
+
   listOfAllCard: Card[] = [
     {
       id: 1,
@@ -181,17 +176,23 @@ export class GameComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
-    this.deckSizeSubscription = this.data.currentselectedDeckSize.subscribe(deckSize => this.deckSize = deckSize)
-    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
 
-    if (this.ThereIsEndedGame || !this.newGameWanted) {
+  startGame() {
+    if (this.ThereIsEndedGame || this.newGameWanted) {
       this.shuffleCards(this.deckSize);
       // this.localStorageClear();
     } else {
       this.localStorageRestore();
     }
     this.IsItStarted = true;
+  }
+
+  ngOnInit(): void {
+    this.deckSizeSubscription = this.data.currentselectedDeckSize.subscribe(deckSize => this.deckSize = deckSize)
+    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
+    this.bestResult = Number(localStorage.getItem('bestResult'));
+
+    this.startGame();
     console.log("Size of the deck:" + this.deckSize);
     // console.log("Deck at the beginning:" + this.cardList);
   }
@@ -217,7 +218,7 @@ export class GameComponent implements OnInit {
       ];
     }
     this.cardList = cards;
-
+    this.data.changeNewGameWanted(false);
   }
 
   //Játékkezedet kártyakeveréssel
@@ -226,7 +227,8 @@ export class GameComponent implements OnInit {
   //A játék újraindításakor nincs szükség annak vizsgálatára, hogy játszottunk-e már? Lehetséges továbbfejlesztés: megerősítő felugró ablak.
   restartGame() {
     this.data.changeNewGameWanted(true);
-    this.shuffleCards(this.deckSize);
+    this.data.changeSelectedDeckSize(this.deckSize);
+    this.startGame();
     this.currentResult = 0;
   }
 
@@ -234,6 +236,8 @@ export class GameComponent implements OnInit {
   checktheBestResult(currentResult: number): number {
     if (currentResult != 0 && currentResult > this.bestResult) {
       this.bestResult = currentResult;
+      localStorage.setItem('bestResult', JSON.stringify(this.bestResult));
+
     }
     this.currentResult = 0;
     return this.bestResult;
