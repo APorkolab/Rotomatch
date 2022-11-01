@@ -4,6 +4,7 @@ import { Card } from 'src/app/model/card';
 import { HomeComponent } from '../home/home.component';
 import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/service/card.service';
+import { threadId } from 'worker_threads';
 
 @Component({
   selector: 'app-game',
@@ -172,31 +173,35 @@ export class GameComponent implements OnInit {
 
 
   constructor(private notification: NotificationService, private data: CardService) {
-
-
   }
 
+
+  ngOnInit(): void {
+    this.deckSizeSubscription = this.data.currentselectedDeckSize.subscribe(deckSize => this.deckSize = deckSize)
+    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
+    this.bestResult = Number(localStorage.getItem('bestResult'));
+    this.startGame();
+    // console.log("Size of the deck:" + this.deckSize);
+  }
 
   startGame() {
     if (this.ThereIsEndedGame || this.newGameWanted) {
       this.shuffleCards(this.deckSize);
-      // this.localStorageClear();
+      this.localStorageClear();
     } else {
       this.localStorageRestore();
     }
     this.IsItStarted = true;
   }
 
-  ngOnInit(): void {
-    this.deckSizeSubscription = this.data.currentselectedDeckSize.subscribe(deckSize => this.deckSize = deckSize)
-    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
-    this.bestResult = Number(localStorage.getItem('bestResult'));
-
+  //A játék újraindításakor nincs szükség annak vizsgálatára, hogy játszottunk-e már?
+  restartGame() {
+    this.data.changeNewGameWanted(true);
+    this.data.changeSelectedDeckSize(this.deckSize);
     this.startGame();
-    console.log("Size of the deck:" + this.deckSize);
-    // console.log("Deck at the beginning:" + this.cardList);
+    this.ThereIsEndedGame = false;
+    this.currentResult = 0;
   }
-
 
   //Betöltjük a kártyák listáját, majd randomizált sorrendben rakjuk vissza a pakliba.
   shuffleCards(deckSize: number) {
@@ -224,13 +229,7 @@ export class GameComponent implements OnInit {
   //Játékkezedet kártyakeveréssel
 
 
-  //A játék újraindításakor nincs szükség annak vizsgálatára, hogy játszottunk-e már? Lehetséges továbbfejlesztés: megerősítő felugró ablak.
-  restartGame() {
-    this.data.changeNewGameWanted(true);
-    this.data.changeSelectedDeckSize(this.deckSize);
-    this.startGame();
-    this.currentResult = 0;
-  }
+
 
   //A legjobb kirakási eredmény vizsgálata.
   checktheBestResult(currentResult: number): number {
@@ -242,8 +241,6 @@ export class GameComponent implements OnInit {
     this.currentResult = 0;
     return this.bestResult;
   }
-
-  //Kártyacsekkelés. Ha azonos a kettő, már nem fordul vissza, ha nem, akkor automatikusan visszafordul.
 
   //A megtalált kártyák szettere.
   setCardToMatched(card1: Card, card2: Card) {
@@ -262,7 +259,7 @@ export class GameComponent implements OnInit {
   flipCardsBack() {
     setTimeout(() => {
       this.hideTheCard();
-    }, 500);
+    }, 1000);
   }
 
 
@@ -288,7 +285,6 @@ export class GameComponent implements OnInit {
     if (this.counter === 2) {
       this.checkCards();
     }
-
   }
 
   checkCards() {
@@ -312,9 +308,6 @@ export class GameComponent implements OnInit {
     }
     this.counter = 0;
     this.twoCard.splice(0, this.twoCard.length)
-    // if (this.firstCard != null && this.secondCard != null) {
-    //   selectedCard.flipped = false;
-    // }
   }
 
 

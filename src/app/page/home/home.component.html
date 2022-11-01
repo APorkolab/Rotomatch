@@ -1,23 +1,27 @@
-<h1 class="mainTitle mt-5">Splendex Memory Game</h1>
-<label for="deck-select">Deck size:</label>
-<select class="form-control" #deckSize (change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize"
-	id="deck-select">
-	<!-- <select class="form-control" #deckSize (change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize"
-	id="deck-select"> -->
-	<!-- <option [value]="option" *ngFor="let option of validDeckSizes">{{option}}</option> -->
-
-	<option value="0">Please, select the size of the deck.</option>
-	<option value="20">20</option>
-	<option value="18">18</option>
-	<option value="16">16</option>
-	<option value="14">14</option>
-	<option value="12">12</option>
-	<option value="10">10</option>
-	<option value="8">8</option>
-	<option value="6">6</option>
-	<option value="4">4</option>
-	<option value="2">2</option>
-
-</select>
-
-<button class="btn btn-danger" [routerLink]="'/game'">START NEW GAME</button>
+<div class="position-relative">
+	<!-- <div class="position-absolute top-50 start-50 translate-middle"> -->
+	<div class="position-absolute top-0 start-50 translate-middle-x">
+		<h1 class="mainTitle mt-5">Splendex Memory Game</h1>
+		<label>Deck size:</label>
+		<br>
+		<select class="form-select-lg mb-4 mx-2" aria-label="Please, select the size of the deck." #deckSize
+			(change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize" id="deck-select">
+			<!-- <select class="form-control" #deckSize (change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize"
+			id="deck-select"> -->
+			<!-- <option [value]="option" *ngFor="let option of validDeckSizes">{{option}}</option> -->
+			<option selected>Open this select menu</option>
+			<option value="20">20</option>
+			<option value="18">18</option>
+			<option value="16">16</option>
+			<option value="14">14</option>
+			<option value="12">12</option>
+			<option value="10">10</option>
+			<option value="8">8</option>
+			<option value="6">6</option>
+			<option value="4">4</option>
+			<option value="2">2</option>
+		</select>
+		<br>
+		<button class="btn btn-danger" [routerLink]="'/game'">START NEW GAME</button>
+	</div>
+</div>
