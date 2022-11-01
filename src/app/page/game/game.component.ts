@@ -204,6 +204,7 @@ export class GameComponent implements OnInit {
     this.data.changeNewGameWanted(true);
     this.data.changeSelectedDeckSize(this.deckSize);
     this.startGame();
+    this.localStorageClear();
     this.ThereIsEndedGame = false;
     this.currentResult = 0;
   }

@@ -596,3 +596,20 @@
   margin-right: auto;
   width: 40%;
 }
+
+body {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3)),
+    url("../src/assets/images/pexels-vedanti-245250.jpg");
+}
+
+.bg-image {
+  -webkit-filter: blur(8px);
+  filter: blur(8px);
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+}

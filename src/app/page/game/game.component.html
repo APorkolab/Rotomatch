@@ -17,7 +17,9 @@
 <!-- <div class="position-absolute top-0 start-50 translate-middle-x"> -->
 
 <!-- <table class="table table-borderless align-middle table-responsive mt-5"> -->
-
+<div class="bg-image">
+	<!-- [style.background-image]="'url( ../assets/images/' + 'pexels-vedanti-245250.jpg' + ')'" -->
+</div>
 <table class="table table-borderless table-responsive col-12 position-absolute top-30 start-50 translate-middle mt-5">
 	<tbody>
 		<tr>
@@ -29,8 +31,13 @@
 				<h6>Best:</h6>
 				<h1>{{bestResult}}</h1>
 			</td>
-			<td class="col-4"><button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
+			<td class="col-4">
+				<button type="button" class="btn btn-danger" data-bs-toggle="modal"
 					data-bs-target="#confirmModal">Restart</button>
+
+				<!-- By the original task 
+					<button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
+					data-bs-target="#confirmModal">Restart</button> -->
 			</td>
 		</tr>
 	</tbody>
