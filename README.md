@@ -1,4 +1,4 @@
-# MatchingGameAngular v.1.0.0 - documentation
+# Rotomatch - the matching game in Angular v.1.0.0 - documentation
 
 ## 1. The description of the task
 
@@ -105,7 +105,7 @@ Technologies used: Angular 14 and Bootstrap 5, other NPM libraries (see _package
 
 ---
 
-# MatchingGameAngular v.1.0.0 - dokumentáció
+# Rotomatch - a párosítós játék Angular-ban v.1.0.0 - dokumentáció
 
 ## 1. A feladatkiírás
 
