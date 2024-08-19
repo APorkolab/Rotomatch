@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   }
 
   Select(value: string) {
-    this.data.onSelected(this.data.ConvertStringToNumber(value))
+    this.data.selectDeckSize(this.data.convertStringToNumber(value))
   }
 
 }

@@ -16,8 +16,7 @@ export class AppComponent {
   }
 
   Select(value: string) {
-    this.data.onSelected(this.data.ConvertStringToNumber(value))
+    this.data.selectDeckSize(this.data.convertStringToNumber(value))
   }
 
-  //possible update to get maxDeckSize from Game component
 }

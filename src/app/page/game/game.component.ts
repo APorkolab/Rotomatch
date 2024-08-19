@@ -1,9 +1,9 @@
 import { NotificationService } from './../../service/notification.service';
-import { Component, EventEmitter, Input, OnInit, Output, QueryList, SimpleChanges, ViewChildren, OnChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Card } from 'src/app/model/card';
 import { Subscription } from 'rxjs';
 import { CardService } from 'src/app/service/card.service';
-import { Router, RouterModule, Routes } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -22,21 +22,14 @@ export class GameComponent implements OnInit {
   IsItStarted = false;
   ThereIsEndedGame = false;
 
-  bestResult = 0;
+  bestResults: { [key: number]: number } = {};
   currentResult = 0;
   counter = 0;
-
+  isProcessing = false;
 
   listOfAllCard: Card[] = [
     {
       id: 1,
-      name: 'Angular',
-      icon: '../../../assets/images/cards/angular.png',
-      flipped: false,
-      matched: false,
-    },
-    {
-      id: 2,
       name: 'Angular',
       icon: '../../../assets/images/cards/angular.png',
       flipped: false,
@@ -50,21 +43,7 @@ export class GameComponent implements OnInit {
       matched: false,
     },
     {
-      id: 4,
-      name: 'D3',
-      icon: '../../../assets/images/cards/d3.png',
-      flipped: false,
-      matched: false,
-    },
-    {
       id: 5,
-      name: 'Jenkins',
-      icon: '../../../assets/images/cards/jenkins.png',
-      flipped: false,
-      matched: false,
-    },
-    {
-      id: 6,
       name: 'Jenkins',
       icon: '../../../assets/images/cards/jenkins.png',
       flipped: false,
@@ -78,21 +57,7 @@ export class GameComponent implements OnInit {
       matched: false,
     },
     {
-      id: 8,
-      name: 'PostCss',
-      icon: '../../../assets/images/cards/postcss.png',
-      flipped: false,
-      matched: false,
-    },
-    {
       id: 9,
-      name: 'React',
-      icon: '../../../assets/images/cards/react.png',
-      flipped: false,
-      matched: false,
-    },
-    {
-      id: 10,
       name: 'React',
       icon: '../../../assets/images/cards/react.png',
       flipped: false,
@@ -106,21 +71,7 @@ export class GameComponent implements OnInit {
       matched: false,
     },
     {
-      id: 12,
-      name: 'Redux',
-      icon: '../../../assets/images/cards/redux.png',
-      flipped: false,
-      matched: false,
-    },
-    {
       id: 13,
-      name: 'SASS',
-      icon: '../../../assets/images/cards/sass.png',
-      flipped: false,
-      matched: false,
-    },
-    {
-      id: 14,
       name: 'SASS',
       icon: '../../../assets/images/cards/sass.png',
       flipped: false,
@@ -134,21 +85,7 @@ export class GameComponent implements OnInit {
       matched: false,
     },
     {
-      id: 16,
-      name: 'Rotomatch',
-      icon: '../../../assets/images/cards/rotomatch.png',
-      flipped: false,
-      matched: false,
-    },
-    {
       id: 17,
-      name: 'TS',
-      icon: '../../../assets/images/cards/ts.png',
-      flipped: false,
-      matched: false,
-    },
-    {
-      id: 18,
       name: 'TS',
       icon: '../../../assets/images/cards/ts.png',
       flipped: false,
@@ -161,172 +98,196 @@ export class GameComponent implements OnInit {
       flipped: false,
       matched: false,
     },
-    {
-      id: 20,
-      name: 'Webpack',
-      icon: '../../../assets/images/cards/webpack.png',
-      flipped: false,
-      matched: false,
-    },
   ];
 
-  constructor(private notification: NotificationService, private data: CardService, private router: Router) {
-  }
-
+  constructor(private notification: NotificationService, private data: CardService, private router: Router) { }
 
   ngOnInit(): void {
-    this.deckSizeSubscription = this.data.currentselectedDeckSize.subscribe(deckSize => this.deckSize = deckSize)
-    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => this.newGameWanted = isANewGameWanted)
-    this.bestResult = Number(localStorage.getItem('bestResult'));
-    this.startGame();
-    if (!this.deckSize) {
-      this.notification.showError('There is no data of decksize. Please, reset the application or wait 2 seconds.', 'Matching Game v.1.0.0');
-      setTimeout(() => {
-        this.router.navigate(['/'])
-      }, 2000);
-    };
-    // console.log("Size of the deck:" + this.deckSize);
+    this.deckSizeSubscription = this.data.currentSelectedDeckSize.subscribe(deckSize => {
+      this.deckSize = deckSize;
+      this.startGame();  // Automatikusan indítja a játékot, ha a deckSize megváltozik
+    });
+    this.newGameWantedSubscription = this.data.currentNewGameWanted.subscribe(isANewGameWanted => {
+      this.newGameWanted = isANewGameWanted;
+      if (isANewGameWanted) {
+        this.restartGame();
+      }
+    });
+    this.loadBestResults();
   }
 
-  //Játékkezedet kártyakeveréssel vagy a parti visszaállításával
+  loadBestResults() {
+    const storedResults = localStorage.getItem('bestResults');
+    if (storedResults) {
+      this.bestResults = JSON.parse(storedResults);
+    } else {
+      // Kezdeti értékek beállítása minden páros paklimérethez 2-től 20-ig
+      for (let size = 2; size <= 20; size += 2) {
+        this.bestResults[size] = Infinity;
+      }
+    }
+  }
+
+  saveBestResults() {
+    localStorage.setItem('bestResults', JSON.stringify(this.bestResults));
+  }
+
   startGame() {
-    if (this.ThereIsEndedGame || this.newGameWanted) {
-      this.shuffleCards(this.deckSize);
-      this.localStorageClear();
-    } else {
-      this.localStorageRestore();
+    if (!this.isValidDeckSize(this.deckSize)) {
+      this.notification.showError('There is no valid data for deck size. Please, reset the application or wait 2 seconds.', 'Matching Game v.1.0.0');
+      setTimeout(() => {
+        this.router.navigate(['/']);
+      }, 2000);
+      return;
     }
-    this.IsItStarted = true;
-  }
 
-  //A játék újraindításakor nincs szükség annak vizsgálatára, hogy játszottunk-e már?
-  restartGame() {
-    this.data.changeNewGameWanted(true);
-    this.data.changeSelectedDeckSize(this.deckSize);
     this.localStorageClear();
-    this.startGame();
+    this.twoCard = [];
+    this.resetCards();
+    this.shuffleCards(this.deckSize);
+    this.IsItStarted = true;
     this.ThereIsEndedGame = false;
+    this.isProcessing = false;
     this.currentResult = 0;
-    this.counter = 0;
   }
 
-  //Betöltjük a kártyák listáját, majd randomizált sorrendben rakjuk vissza a pakliba.
+  restartGame() {
+    this.startGame();
+  }
+
+  isValidDeckSize(deckSize: number): boolean {
+    return deckSize > 0 && deckSize % 2 === 0 && deckSize <= this.listOfAllCard.length * 2;
+  }
+
+  resetCards() {
+    this.cardList.forEach(card => {
+      card.flipped = false;
+      card.matched = false;
+    });
+  }
+
   shuffleCards(deckSize: number) {
-    let cards: Card[] = this.listOfAllCard;
-    let randomIndex: number;
-    if (deckSize % 2 == 0 && deckSize !== 0) {
-      this.notification.showSuccess('The size (' + deckSize + ') of the deck is correct, because it is even. Therefore the decksize has been set.', 'Matching Game v.1.0.0');
-    } else {
-      deckSize = 20;
-      this.notification.showError('The size of the deck is incorrect, because it is not even or null/undefined. The decksize will be 20.', 'Matching Game v.1.0.0')
+    let selectedCards: Card[] = [];
+
+    for (let i = 0; i < deckSize / 2; i++) {
+      const card = { ...this.listOfAllCard[i % this.listOfAllCard.length] };
+      selectedCards.push(card);
+      selectedCards.push({ ...card, id: (card.id as number) + 10000 });
     }
-    cards.length = deckSize;
-    while (deckSize != 0) {
-      randomIndex = Math.floor(Math.random() * deckSize);
-      deckSize--;
-      [cards[deckSize], cards[randomIndex]] = [
-        cards[randomIndex],
-        cards[deckSize],
-      ];
+
+    for (let i = selectedCards.length - 1; i > 0; i--) {
+      const randomIndex = Math.floor(Math.random() * (i + 1));
+      [selectedCards[i], selectedCards[randomIndex]] = [selectedCards[randomIndex], selectedCards[i]];
     }
-    this.cardList = cards;
-    this.cardList.map(card => card.flipped = false)
-    this.cardList.map(card => card.matched = false)
+
+    this.cardList = selectedCards.map(card => ({ ...card, flipped: false, matched: false }));
     this.data.changeNewGameWanted(false);
   }
 
-  //A megtalált kártyák szettere.
   setCardToMatched(card1: Card, card2: Card) {
-    this.twoCard.forEach((card) => {
+    this.cardList.forEach((card) => {
       if (card.id === card1.id || card.id === card2.id) {
         card.flipped = true;
         card.matched = true;
-        this.counter = 0;
       }
     });
     this.checkGameStatus();
-    this.twoCard.splice(0, this.twoCard.length);
+    this.counter = 0;
+    this.twoCard = [];
+    this.isProcessing = false;
   }
 
-  //A nem párban levő kártyák visszafordulásáért felelős függvény.
   flipCardsBack() {
     setTimeout(() => {
       this.hideTheCard();
-    }, 1000);
+      this.counter = 0;
+      this.isProcessing = false;
+    }, 1500);
   }
 
-
   revealTheCard(selectedCard: Card) {
-    if (!selectedCard.flipped && this.counter >= 0 && this.counter <= 1) {
+    if (!this.IsItStarted || this.isProcessing || selectedCard.flipped || this.counter >= 2) {
+      return;
+    }
+    if (this.twoCard.findIndex(card => card.id === selectedCard.id) === -1) {
       this.twoCard.push(selectedCard);
       selectedCard.flipped = true;
       this.counter++;
     }
 
     if (this.counter === 2) {
+      this.isProcessing = true;
       this.checkCards();
     }
   }
 
   checkCards() {
+    if (this.twoCard.length !== 2) return;
     if (
       this.twoCard[0].name === this.twoCard[1].name &&
       this.twoCard[0].id !== this.twoCard[1].id
     ) {
       this.setCardToMatched(this.twoCard[0], this.twoCard[1]);
-      this.currentResult = this.currentResult + 1;
     } else {
       this.flipCardsBack();
-      this.currentResult = this.currentResult + 1;
     }
+    this.currentResult++;
     this.localStorageStore(this.cardList);
   }
 
   hideTheCard() {
-    if (this.twoCard[0].flipped && !this.twoCard[0].matched && this.twoCard[1].flipped && !this.twoCard[1].matched) {
+    if (this.twoCard.length === 2 && !this.twoCard[0].matched && !this.twoCard[1].matched) {
       this.twoCard[0].flipped = false;
       this.twoCard[1].flipped = false;
     }
     this.counter = 0;
-    this.twoCard.splice(0, this.twoCard.length)
+    this.twoCard = [];
   }
 
-  //A játék kijátszását ellenőrzi.
   checkGameStatus() {
     const unmatchedCard = this.cardList.find((card) => !card.matched);
     if (!unmatchedCard) {
       this.IsItStarted = false;
       this.ThereIsEndedGame = true;
-      this.checktheBestResult(this.currentResult);
+      this.checkTheBestResult(this.currentResult);
       this.currentResult = 0;
-      this.notification.showSuccess('You have won! Click the restart button, if you would like to play an another game.', 'Matching Game v.1.0.0')
+      this.notification.showSuccess('You have won! Click the restart button, if you would like to play another game.', 'Matching Game v.1.0.0');
     }
   }
 
-  //A legjobb kirakási eredmény vizsgálata.
-  checktheBestResult(currentResult: number): number {
-    if (currentResult != 0 && currentResult > this.bestResult) {
-      this.bestResult = currentResult;
-      localStorage.setItem('bestResult', JSON.stringify(this.bestResult));
-
+  checkTheBestResult(currentResult: number): number {
+    if (currentResult > 0 && currentResult < this.bestResults[this.deckSize]) {
+      this.bestResults[this.deckSize] = currentResult;
+      this.saveBestResults();  // Mentés localStorage-be
     }
-    this.currentResult = 0;
-    return this.bestResult;
+    return this.bestResults[this.deckSize];
   }
-
 
   localStorageStore(cardList: Card[]) {
-    this.localStorageClear();
-    cardList.map(card => localStorage.setItem('cards', JSON.stringify(cardList)));
+    localStorage.setItem('cards', JSON.stringify(cardList));
   }
 
   localStorageRestore() {
-    this.cardList.splice(0, this.cardList.length);
-    this.cardList = JSON.parse(localStorage.getItem("cards")!);
+    const storedCards = localStorage.getItem("cards");
+    if (storedCards) {
+      try {
+        const parsedCards = JSON.parse(storedCards);
+        if (Array.isArray(parsedCards) && parsedCards.length === this.deckSize) {
+          this.cardList = parsedCards;
+        } else {
+          this.localStorageClear();
+          this.shuffleCards(this.deckSize);
+        }
+      } catch (error) {
+        this.localStorageClear();
+        this.shuffleCards(this.deckSize);
+      }
+    } else {
+      this.shuffleCards(this.deckSize);
+    }
   }
 
   localStorageClear() {
     localStorage.removeItem("cards");
   }
-
 }

@@ -8,8 +8,7 @@ import { NotificationService } from './notification.service';
 export class CardService {
 
   private selectedDeckSize = new BehaviorSubject<number>(0);
-  currentselectedDeckSize = this.selectedDeckSize.asObservable();
-
+  currentSelectedDeckSize = this.selectedDeckSize.asObservable();
 
   private newGameWanted = new BehaviorSubject<boolean>(false);
   currentNewGameWanted = this.newGameWanted.asObservable();
@@ -24,15 +23,17 @@ export class CardService {
     this.newGameWanted.next(value);
   }
 
-
-  onSelected(value: number,): void {
-    // this.selectedDeckSize = value;
+  selectDeckSize(value: number): void {
     this.changeSelectedDeckSize(value);
     this.changeNewGameWanted(true);
   }
 
-  ConvertStringToNumber(input: string) {
+  convertStringToNumber(input: string): number {
     let numeric = Number(input);
+    if (isNaN(numeric)) {
+      this.message.showError('Invalid number format', 'Error');
+      return 0;
+    }
     return numeric;
   }
 
