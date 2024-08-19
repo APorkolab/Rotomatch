@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+	"start": "ng serve --host 0.0.0.0 --port $PORT",
+	"postinstall": "npm install",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -36,7 +37,7 @@
     "@angular-eslint/eslint-plugin-template": "^18.2.0",
     "@angular-eslint/schematics": "^18.2.0",
     "@angular-eslint/template-parser": "^18.2.0",
-    "@angular/cli": "^18.1.3",
+    "@angular/cli": "^18.2.0",
     "@angular/compiler-cli": "^18.1.3",
     "@angular/language-service": "^18.1.3",
     "@angular/localize": "^18.1.3",
