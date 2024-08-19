@@ -1,1 +1,1 @@
-web: npx serve -s dist/rotomatch/browser
+web: npx serve -s dist/matching-game-angular
