@@ -1,13 +1,13 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { Card } from '../model/card';
-import { NotificationService } from './notification.service';
-import { Router } from '@angular/router';
 import { GameStateService } from './game-state.service';
-import { HttpClient } from '@angular/common/http';
+import { NotificationService } from './notification.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameLogicService {
   private cardList = new BehaviorSubject<Card[]>([]);
@@ -33,7 +33,7 @@ export class GameLogicService {
     private notification: NotificationService,
     private router: Router,
     private data: GameStateService,
-    private http: HttpClient
+    private http: HttpClient,
   ) {
     this.loadAllCards();
   }
@@ -45,19 +45,28 @@ export class GameLogicService {
       },
       error: (err) => {
         console.error('Failed to load card data', err);
-        this.notification.showError('Could not load game assets. Please refresh the page.', 'Error');
-      }
+        this.notification.showError(
+          'Could not load game assets. Please refresh the page.',
+          'Error',
+        );
+      },
     });
   }
 
   public newGame(deckSize: number): void {
     if (this.allCards.length === 0) {
-        this.notification.showError('Game data is not loaded yet. Please wait a moment.', 'Matching Game');
-        return;
+      this.notification.showError(
+        'Game data is not loaded yet. Please wait a moment.',
+        'Matching Game',
+      );
+      return;
     }
     this.deckSize = deckSize;
     if (!this.isValidDeckSize(this.deckSize)) {
-      this.notification.showError('There is no valid data for deck size. Please, reset the application.', 'Matching Game');
+      this.notification.showError(
+        'There is no valid data for deck size. Please, reset the application.',
+        'Matching Game',
+      );
       this.router.navigate(['/']);
       return;
     }
@@ -75,7 +84,7 @@ export class GameLogicService {
     }
 
     const currentCards = this.cardList.value;
-    const cardInDeck = currentCards.find(c => c.id === selectedCard.id);
+    const cardInDeck = currentCards.find((c) => c.id === selectedCard.id);
 
     if (cardInDeck && !cardInDeck.flipped) {
       cardInDeck.flipped = true;
@@ -91,25 +100,46 @@ export class GameLogicService {
   }
 
   private isValidDeckSize(deckSize: number): boolean {
-    return deckSize > 0 && deckSize % 2 === 0 && deckSize <= this.allCards.length * 2;
+    return (
+      deckSize > 0 && deckSize % 2 === 0 && deckSize <= this.allCards.length * 2
+    );
   }
 
   private shuffleCards(deckSize: number): void {
     let selectedCards: Card[] = [];
     const availableCards = [...this.allCards];
 
+    const backColor = this.getRandomColor();
+
     for (let i = 0; i < deckSize / 2; i++) {
-      const card = { ...availableCards[i % availableCards.length] };
+      const card = {
+        ...availableCards[i % availableCards.length],
+        backColor: backColor,
+      };
       selectedCards.push(card);
-      selectedCards.push({ ...card, id: (card.id as number) + 10000 });
+      selectedCards.push({
+        ...card,
+        id: (card.id as number) + 10000,
+        backColor: backColor,
+      });
     }
 
+    // shuffle
     for (let i = selectedCards.length - 1; i > 0; i--) {
       const randomIndex = Math.floor(Math.random() * (i + 1));
-      [selectedCards[i], selectedCards[randomIndex]] = [selectedCards[randomIndex], selectedCards[i]];
+      [selectedCards[i], selectedCards[randomIndex]] = [
+        selectedCards[randomIndex],
+        selectedCards[i],
+      ];
     }
 
-    this.cardList.next(selectedCards.map(card => ({ ...card, flipped: false, matched: false })));
+    this.cardList.next(
+      selectedCards.map((card) => ({
+        ...card,
+        flipped: false,
+        matched: false,
+      })),
+    );
     this.data.changeNewGameWanted(false);
   }
 
@@ -128,7 +158,7 @@ export class GameLogicService {
   }
 
   private setCardsToMatched(card1: Card, card2: Card): void {
-    const currentCards = this.cardList.value.map(card => {
+    const currentCards = this.cardList.value.map((card) => {
       if (card.id === card1.id || card.id === card2.id) {
         return { ...card, matched: true, flipped: true };
       }
@@ -142,8 +172,11 @@ export class GameLogicService {
 
   private flipCardsBack(): void {
     setTimeout(() => {
-      const currentCards = this.cardList.value.map(card => {
-        if (!card.matched && (card.id === this.twoCard[0].id || card.id === this.twoCard[1].id)) {
+      const currentCards = this.cardList.value.map((card) => {
+        if (
+          !card.matched &&
+          (card.id === this.twoCard[0].id || card.id === this.twoCard[1].id)
+        ) {
           return { ...card, flipped: false };
         }
         return card;
@@ -160,10 +193,13 @@ export class GameLogicService {
   }
 
   private checkGameStatus(): void {
-    const allMatched = this.cardList.value.every(card => card.matched);
+    const allMatched = this.cardList.value.every((card) => card.matched);
     if (allMatched && this.cardList.value.length > 0) {
       this.gameWon.next();
-      this.notification.showSuccess('You have won! Click the restart button for a new game.', 'Matching Game');
+      this.notification.showSuccess(
+        'You have won! Click the restart button for a new game.',
+        'Matching Game',
+      );
       this.updateBestResult(this.score.value);
     }
   }
@@ -172,7 +208,10 @@ export class GameLogicService {
 
   private updateBestResult(currentResult: number): void {
     const bestResults = this.loadBestResults();
-    if (currentResult > 0 && currentResult < (bestResults[this.deckSize] || Infinity)) {
+    if (
+      currentResult > 0 &&
+      currentResult < (bestResults[this.deckSize] || Infinity)
+    ) {
       bestResults[this.deckSize] = currentResult;
       this.saveBestResults(bestResults);
     }
@@ -200,5 +239,13 @@ export class GameLogicService {
 
   private localStorageClear(): void {
     localStorage.removeItem('cards');
+  }
+  private getRandomColor(): string {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 }

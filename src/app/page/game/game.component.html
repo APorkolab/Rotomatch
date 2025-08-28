@@ -1,47 +1,88 @@
-<table class="table table-borderless table-responsive col-12 position-absolute top-30 start-50 translate-middle mt-5">
-	<tbody>
-		<tr>
-			<td class="col-4">
-				<h6>Current tries:</h6>
-				<h5>{{ score$ | async }}</h5>
-			</td>
-			<td class="col-4">
-				<h6>Best:</h6>
-				<h1>{{ getBestScoreForCurrentDeck() || 'N/A' }}</h1>
-			</td>
-			<td class="col-4">
-				<button type="button" class="btn btn-danger" (click)="openModal(confirmModal)">Restart</button>
-			</td>
-		</tr>
-	</tbody>
-</table>
-<br>
-<br>
-<br>
-<section class="cardContainer" [class.disabled]="(isProcessing$ | async)">
-	<div class="card-flipper"
-         *ngFor="let card of (cardList$ | async); trackBy: trackByCardId"
-         [class.flipped]="card.flipped"
-         (click)="revealCard(card)">
-		<div class="card card-front" [ngClass]="{'card-matched': card.matched}">
-			<img src="{{card.icon}}" alt="icon of the card">
-		</div>
-		<div class="card card-back"></div>
-	</div>
+<!-- FEJLÉC / STATOK -->
+<div class="container py-3">
+  <div class="row align-items-center g-3">
+    <div class="col-12 col-md-4">
+      <h6 class="mb-1">Current tries</h6>
+      <h5 class="mb-0">{{ (score$ | async) ?? 0 }}</h5>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <h6 class="mb-1">Best</h6>
+      <h1 class="h2 mb-0">{{ getBestScoreForCurrentDeck() || "N/A" }}</h1>
+    </div>
+
+    <div class="col-12 col-md-4 text-md-end">
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="openModal(confirmModal)"
+        [disabled]="(isProcessing$ | async) === true"
+        aria-label="Restart game"
+      >
+        Restart
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- JÁTÉKTÉR -->
+<section
+  class="cardContainer"
+  [class.disabled]="(isProcessing$ | async) === true"
+  [attr.aria-busy]="isProcessing$ | async"
+  aria-live="polite"
+>
+  <div
+    class="card-flipper"
+    *ngFor="let card of cardList$ | async; trackBy: trackByCardId"
+    [class.flipped]="card.flipped"
+    [class.card-matched]="card.matched"
+    (click)="revealCard(card)"
+    role="button"
+    tabindex="0"
+    [attr.aria-pressed]="card.flipped"
+    [attr.aria-label]="card.flipped ? card.name || 'Face-down card' : 'Card'"
+  >
+    <!-- ELŐLAP -->
+    <div class="card card-back">
+      <img
+        [src]="card.icon"
+        [alt]="card.name || 'card icon'"
+        class="img-fluid"
+        draggable="false"
+      />
+    </div>
+
+    <!-- HÁTLAP – közös random szín minden leosztáskor -->
+    <div
+      class="card card-front"
+      [style.backgroundColor]="card.backColor || '#888888'"
+    ></div>
+  </div>
 </section>
 
+<!-- MODAL -->
 <ng-template #confirmModal>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">Begin a new game?</h4>
-    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
-      <span aria-hidden="true" class="visually-hidden">&times;</span>
-    </button>
+    <h4 class="modal-title">Begin a new game?</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modalRef?.hide()"
+    ></button>
   </div>
+
   <div class="modal-body">
-    If you click 'yes', your current progress will be lost.
+    If you click “New game”, your current progress will be lost.
   </div>
+
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Close</button>
-    <button type="button" class="btn btn-primary" (click)="restartGame()">New game</button>
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">
+      Close
+    </button>
+    <button type="button" class="btn btn-primary" (click)="restartGame()">
+      New game
+    </button>
   </div>
 </ng-template>

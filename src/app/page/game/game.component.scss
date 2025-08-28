@@ -26,7 +26,7 @@
   height: 100%;
   width: 100%;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: absolute;
   top: 0;
   left: 0;
@@ -37,18 +37,17 @@
 }
 
 .card-front {
-  background-color: #ffffff;
+  background-image: url("../../../assets/images/rotomatch-logo.svg");
   z-index: 2;
   /* Front face is initially visible */
   transform: rotateY(0deg);
 }
 
 .card-back {
-  background-image: url('../../../assets/images/rotomatch-logo.svg');
   background-size: 60%;
   background-repeat: no-repeat;
   background-position: center;
-  background-color: #e0e0e0;
+  background-color: #8888;
   /* Back face is initially hidden */
   transform: rotateY(180deg);
 }

@@ -25,6 +25,7 @@
     "@angular/platform-browser-dynamic": "^19.2.14",
     "@angular/router": "^19.2.14",
     "bootstrap": "^5.3.3",
+    "fix": "^0.0.6",
     "font-awesome": "^4.7.0",
     "ngx-bootstrap": "^19.0.0",
     "ngx-toastr": "^19.0.0",
