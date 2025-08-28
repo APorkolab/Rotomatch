@@ -1,16 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { Router } from '@angular/router';
+import { GameStateService } from 'src/app/service/game-state.service';
 import { HomeComponent } from './home.component';
 
 describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
+  let gameStateService: jasmine.SpyObj<GameStateService>;
+  let router: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
+    const gameStateSpy = jasmine.createSpyObj('GameStateService', ['selectDeckSize', 'convertStringToNumber']);
+    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+
     await TestBed.configureTestingModule({
-      declarations: [ HomeComponent ]
+      imports: [ HomeComponent ],
+      providers: [
+        { provide: GameStateService, useValue: gameStateSpy },
+        { provide: Router, useValue: routerSpy }
+      ]
     })
     .compileComponents();
+
+    gameStateService = TestBed.inject(GameStateService) as jasmine.SpyObj<GameStateService>;
+    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
   });
 
   beforeEach(() => {
@@ -21,5 +34,14 @@ describe('HomeComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call selectDeckSize on the service when Select is called', () => {
+    const value = '12';
+    component.Select(value);
+    expect(gameStateService.convertStringToNumber).toHaveBeenCalledWith(value);
+    // We can't easily test the result of the above call without more complex mocking,
+    // but we can check that selectDeckSize was called.
+    expect(gameStateService.selectDeckSize).toHaveBeenCalled();
   });
 });

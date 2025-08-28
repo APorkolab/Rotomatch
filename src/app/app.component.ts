@@ -1,22 +1,14 @@
 import { Component } from '@angular/core';
-import { elementAt } from 'rxjs';
-import { GameComponent } from './page/game/game.component';
-import { CardService } from './service/card.service';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss'],
+    standalone: true,
+    imports: [RouterOutlet, RouterLink, RouterLinkActive, CollapseModule]
 })
 export class AppComponent {
-  title = 'MatchingGameAngular';
-
-  constructor(private data: CardService) {
-
-  }
-
-  Select(value: string) {
-    this.data.selectDeckSize(this.data.convertStringToNumber(value))
-  }
-
+  isCollapsed = true;
 }

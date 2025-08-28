@@ -5,7 +5,7 @@ import { NotificationService } from './notification.service';
 @Injectable({
   providedIn: 'root'
 })
-export class CardService {
+export class GameStateService {
 
   private selectedDeckSize = new BehaviorSubject<number>(0);
   currentSelectedDeckSize = this.selectedDeckSize.asObservable();

@@ -1,131 +1,33 @@
 <header>
-
-  <!-- Fixed navbar -->
-  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+  <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img src="../assets/images/rotomatch-logo.svg" alt="Rotomatch" width="75">
+      <a class="navbar-brand" routerLink="/">
+        <img src="assets/images/rotomatch-logo.svg" alt="Rotomatch" width="100">
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed"
+        [attr.aria-expanded]="!isCollapsed" aria-controls="navbarCollapse">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+      <div class="collapse navbar-collapse" id="navbarCollapse" [collapse]="isCollapsed" [isAnimated]="true">
+        <ul class="navbar-nav ms-auto mb-2 mb-md-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" [routerLink]="['/']">Home</a>
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/rules']">Rules</a>
+            <a class="nav-link" routerLink="/rules" routerLinkActive="active">Rules</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/game']">Game</a>
+            <a class="nav-link" routerLink="/game" routerLinkActive="active">Game</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" [routerLink]="['/contact']">Contact</a>
+            <a class="nav-link" routerLink="/contact" routerLinkActive="active">Contact</a>
           </li>
         </ul>
-        <!-- <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form> -->
       </div>
-    </div>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-      <ul class="navbar-nav me-auto mb-2 mb-md-0">
-
-        <li class="nav-item">
-          <div><label>Deck size:</label>
-            <br>
-            <select class="form-select-lg mb-4 mx-2" aria-label="Please, select the size of the deck." #deckSize
-              (change)="Select(deckSize.value)" name="deckSize" id="deck-select">
-              <!-- <select class="form-control" #deckSize (change)="onSelected(ConvertStringToNumber(deckSize.value))" name="deckSize"
-          			id="deck-select"> -->
-              <!-- <option [value]="option" *ngFor="let option of validDeckSizes">{{option}}</option> -->
-              <option selected>Open this select menu</option>
-              <option value="20">20</option>
-              <option value="18">18</option>
-              <option value="16">16</option>
-              <option value="14">14</option>
-              <option value="12">12</option>
-              <option value="10">10</option>
-              <option value="8">8</option>
-              <option value="6">6</option>
-              <option value="4">4</option>
-              <option value="2">2</option>
-            </select>
-          </div>
-        </li>
-        <li class="nav-item col-3">
-          <div><button class="btn btn-danger" [routerLink]="'/game'">START NEW GAME</button></div>
-        </li>
-      </ul>
-    </div>
-    <div class="navbar-collapse collapse w-100" id="collapsingNavbar3">
-      <ul class="navbar-nav w-100 justify-content-center">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">
-
-            <!-- <select (change)="onSelected(selectedDeckSize)" id="deck-select">
-              <option *ngFor="let deckSizeNumber of getEveryValidDeckSize(maxDeckSize)" [value]="deckSizeNumber">
-                {{deckSizeNumber}}</option>
-            </select>
-
- -->
-
-
-
-          </a>
-        </li>
-
-      </ul>
-
     </div>
   </nav>
 </header>
 
-
-
-
-
-
-
-
-<!-- <form class="d-flex" role="search">
-    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-    <button class="btn btn-outline-success" type="submit">Search</button>
-  </form> -->
-
-
-
-<!-- Begin page content -->
-<div class="container ">
-
-  <!-- <h1 class="mt-5">Sticky footer with fixed navbar</h1>
-      <p class="lead">Pin a footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A
-        
-        fixed navbar has been added with <code class="small">padding-top: 60px;</code> on the <code
-        class="small">main &gt; .container</code>.</p>
-        <p>Back to <a href="/docs/5.2/examples/sticky-footer/">the default sticky footer</a> minus the navbar.</p> -->
-  <router-outlet class="mt-5 content">
-  </router-outlet>
-</div>
-
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="confirmModalLabel">Begin a new game?</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        If you click 'yes', your current results will be deleted.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <!-- <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="restartGame()">New game</button> -->
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">New game</button>
-      </div>
-    </div>
-  </div>
-</div>
+<main class="container">
+  <router-outlet></router-outlet>
+</main>

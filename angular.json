@@ -33,8 +33,6 @@
               "node_modules/ngx-toastr/toastr.css"
             ],
             "scripts": [
-              "./node_modules/bootstrap/dist/js/bootstrap.js",
-              "./node_modules/jquery/dist/jquery.js",
               "./src/assets/js/4a23ae3c90.js"
             ]
           },

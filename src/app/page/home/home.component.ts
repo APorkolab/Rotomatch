@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { CardService } from 'src/app/service/card.service';
+import { Router, RouterLink } from '@angular/router';
+import { GameStateService } from 'src/app/service/game-state.service';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: true,
+    imports: [RouterLink]
 })
 export class HomeComponent implements OnInit {
   maxDeckSize = 20;
   // selectedDeckSize = 0;
 
-  constructor(private router: Router, private data: CardService) { }
+  constructor(private router: Router, private data: GameStateService) { }
 
   ngOnInit(): void {
   }

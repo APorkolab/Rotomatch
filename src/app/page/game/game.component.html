@@ -3,19 +3,14 @@
 		<tr>
 			<td class="col-4">
 				<h6>Current tries:</h6>
-				<h5>{{currentResult}}</h5>
+				<h5>{{ score$ | async }}</h5>
 			</td>
 			<td class="col-4">
 				<h6>Best:</h6>
-				<h1>{{ bestResults[deckSize] || 'N/A' }}</h1>
+				<h1>{{ getBestScoreForCurrentDeck() || 'N/A' }}</h1>
 			</td>
 			<td class="col-4">
-				<button type="button" class="btn btn-danger" data-bs-toggle="modal"
-					data-bs-target="#confirmModal">Restart</button>
-
-				<!-- By the original task 
-					<button type="button" class="btn btn-outline-dark" data-bs-toggle="modal"
-					data-bs-target="#confirmModal">Restart</button> -->
+				<button type="button" class="btn btn-danger" (click)="openModal(confirmModal)">Restart</button>
 			</td>
 		</tr>
 	</tbody>
@@ -23,33 +18,30 @@
 <br>
 <br>
 <br>
-<section class="cardContainer">
-	<div *ngFor="let card of cardList">
-		<div *ngIf="card.flipped" class="card card-front" (click)="revealTheCard(card)"
-			[ngClass]="{'card-matched': card.matched}">
+<section class="cardContainer" [class.disabled]="(isProcessing$ | async)">
+	<div class="card-flipper"
+         *ngFor="let card of (cardList$ | async); trackBy: trackByCardId"
+         [class.flipped]="card.flipped"
+         (click)="revealCard(card)">
+		<div class="card card-front" [ngClass]="{'card-matched': card.matched}">
 			<img src="{{card.icon}}" alt="icon of the card">
 		</div>
-		<div *ngIf="!card.flipped" class="card card-back" (click)="revealTheCard(card)"></div>
+		<div class="card card-back"></div>
 	</div>
-
 </section>
 
-
-
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h1 class="modal-title fs-5" id="confirmModalLabel">Begin a new game?</h1>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				If you click 'yes', your current results will be deleted.
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="restartGame()">New game</button>
-			</div>
-		</div>
-	</div>
-</div>
+<ng-template #confirmModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Begin a new game?</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    If you click 'yes', your current progress will be lost.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="restartGame()">New game</button>
+  </div>
+</ng-template>

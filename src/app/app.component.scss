@@ -1,1 +1,4 @@
-
+/* Add padding to the main content area to account for the fixed navbar */
+main {
+  padding-top: 100px; /* Adjust this value based on the actual height of your navbar */
+}
