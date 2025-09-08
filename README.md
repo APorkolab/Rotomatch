@@ -1,6 +1,199 @@
-# Rotomatch - the matching game in Angular v.1.0.0 - documentation
+# 🎮 Rotomatch - Advanced Memory Matching Game v.2.0.0
 
-## 1. The description of the task
+[![CI/CD Pipeline](https://github.com/APorkolab/Rotomatch/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/APorkolab/Rotomatch/actions/workflows/ci-cd.yml)
+[![codecov](https://codecov.io/gh/APorkolab/Rotomatch/branch/main/graph/badge.svg)](https://codecov.io/gh/APorkolab/Rotomatch)
+[![Performance](https://img.shields.io/badge/Lighthouse-90%2B-green)](https://rotomatch.porkolab.hu)
+[![License](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
+A sophisticated, enterprise-grade memory matching game built with Angular 19, featuring modern architecture, comprehensive testing, and advanced game mechanics.
+
+## 🚀 What's New in v2.0.0
+
+### 🏗️ **Senior+++ Architecture Improvements**
+- **Modern TypeScript**: Strict typing, no `any` types, comprehensive interfaces
+- **Angular Signals**: Reactive state management with computed values
+- **Error Handling**: Comprehensive error boundaries with retry logic
+- **Performance Monitoring**: Real-time FPS tracking and optimization suggestions
+- **Advanced State Management**: Persistent game state with auto-save
+- **Achievement System**: Unlock achievements and track detailed statistics
+
+### 🎯 **Game Features**
+- **Multiple Difficulty Levels**: Easy, Medium, Hard with different timing constraints
+- **Game Timer**: Real-time timer with pause/resume functionality
+- **Statistics Tracking**: Comprehensive game statistics and best scores
+- **Achievement System**: 12+ achievements across different categories
+- **Auto-Save**: Persistent game state across page reloads
+- **Responsive Design**: Optimized for all device sizes
+
+### 🛠️ **Developer Experience**
+- **CI/CD Pipeline**: Automated testing, linting, and deployment
+- **Code Quality**: ESLint + Prettier with comprehensive rules
+- **Performance Auditing**: Lighthouse CI integration
+- **Type Safety**: 100% TypeScript coverage with strict mode
+- **Testing**: Unit tests with high coverage
+- **Documentation**: Comprehensive inline documentation
+
+## 📚 Table of Contents
+
+- [Quick Start](#quick-start)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Development](#development)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Performance](#performance)
+- [Contributing](#contributing)
+- [Original Task Description](#original-task-description)
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 20.x or higher
+- npm 10.x or higher
+- Modern web browser with ES2020 support
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/APorkolab/Rotomatch.git
+cd Rotomatch
+
+# Install dependencies
+npm ci
+
+# Start development server
+npm start
+
+# Open your browser to http://localhost:4200
+```
+
+### Quick Commands
+
+```bash
+# Development
+npm start              # Start dev server
+npm run build         # Production build
+npm run build:dev     # Development build
+npm run watch         # Watch mode
+
+# Testing & Quality
+npm test              # Run unit tests
+npm run test:ci       # CI tests with coverage
+npm run lint          # Lint code
+npm run lint:fix      # Fix linting issues
+npm run format        # Format code
+
+# Analysis
+npm run build:analyze # Bundle analysis
+npm run audit:security # Security audit
+```
+
+## 🎯 Features
+
+### 🎮 Core Game Mechanics
+- **Card Matching**: Classic memory game with flip animations
+- **Deck Sizes**: Configurable from 4 to 20 cards (2-10 pairs)
+- **Difficulty Levels**: 
+  - **Easy**: 2.5s card reveal time, no limits
+  - **Medium**: 1.5s reveal time, 5-minute time limit
+  - **Hard**: 0.8s reveal time, attempt limits, 3-minute time limit
+
+### 🏆 Achievement System
+- **12+ Unique Achievements** across 6 categories:
+  - 🎆 **Beginner**: First game completions
+  - 🎯 **Skill**: Perfect games and win streaks
+  - ⚡ **Speed**: Time-based challenges
+  - 💪 **Persistence**: Long-term engagement
+  - 🏆 **Mastery**: Expert-level accomplishments
+  - 🎁 **Special**: Unique scenarios
+
+### 📊 Statistics & Analytics
+- **Game Statistics**: Win rate, average attempts, play time
+- **Performance Metrics**: Best scores per deck size and difficulty
+- **Progress Tracking**: Achievement progress and completion rates
+- **Historical Data**: Persistent statistics across sessions
+
+### 🔄 Advanced State Management
+- **Auto-Save**: Game state persists across page reloads
+- **Pause/Resume**: Interrupt and continue games seamlessly
+- **Error Recovery**: Graceful handling of invalid states
+- **Performance Optimized**: Efficient state updates with signals
+
+## 🏗️ Architecture
+
+### 📦 Project Structure
+```
+src/
+├── app/
+│   ├── components/          # Reusable UI components
+│   ├── pages/               # Route components
+│   ├── services/            # Business logic services
+│   ├── types/               # TypeScript interfaces
+│   ├── model/               # Data models
+│   └── utils/               # Utility functions
+├── assets/               # Static assets
+└── environments/         # Environment configs
+```
+
+### 🔧 Core Services
+
+#### 🎮 GameStateManagerService
+- **Reactive State**: Angular signals for real-time updates
+- **Game Logic**: Card flipping, matching, and win conditions
+- **Timer Management**: Precise timing with pause/resume
+- **Persistence**: Auto-save to localStorage
+
+#### 🏆 AchievementsService
+- **Achievement Tracking**: Automatic unlock detection
+- **Statistics Engine**: Comprehensive game analytics
+- **Progress Calculation**: Real-time achievement progress
+
+#### ⚡ PerformanceService
+- **FPS Monitoring**: Real-time frame rate tracking
+- **Performance Metrics**: Load times, memory usage
+- **Optimization Suggestions**: Automatic performance hints
+- **Device Capabilities**: Hardware detection
+
+#### 🛡️ ErrorHandlerService
+- **Global Error Handling**: Catch and process all errors
+- **Retry Logic**: Automatic retry with exponential backoff
+- **User-Friendly Messages**: Convert technical errors
+- **Error Logging**: Development and production logging
+
+### 📝 Type Safety
+- **Comprehensive Interfaces**: Every data structure typed
+- **Strict TypeScript**: No `any` types, strict mode enabled
+- **Enum Usage**: Type-safe constants and states
+- **Generic Types**: Reusable type definitions
+
+## 🛠️ Development
+
+### 🔧 Development Setup
+```bash
+# Install dependencies
+npm ci
+
+# Set up pre-commit hooks
+npm run prepare
+
+# Start development with hot reload
+npm start
+```
+
+### 🔍 Code Quality Tools
+- **ESLint**: Comprehensive linting with Angular-specific rules
+- **Prettier**: Consistent code formatting
+- **Husky**: Git hooks for pre-commit checks
+- **lint-staged**: Run linters on staged files only
+
+### 📋 Coding Standards
+- **TypeScript Strict Mode**: Maximum type safety
+- **Angular Style Guide**: Following official conventions
+- **SOLID Principles**: Clean architecture patterns
+- **Reactive Programming**: RxJS and Angular signals
+
+## 1. Original Task Description
 
 > Your task is to build a simple card-matching game, the kind that your
 > brother/sister/best friend always cheated at when you were little. In

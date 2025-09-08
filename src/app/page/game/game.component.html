@@ -1,88 +1,247 @@
-<!-- FEJLÉC / STATOK -->
-<div class="container py-3">
-  <div class="row align-items-center g-3">
-    <div class="col-12 col-md-4">
-      <h6 class="mb-1">Current tries</h6>
-      <h5 class="mb-0">{{ (score$ | async) ?? 0 }}</h5>
+<!-- Game Header -->
+<div class="game-header">
+  <div class="header-content">
+    <!-- Game Status Banner -->
+    <div class="game-status-banner" [class]="getGameStatusClass()">
+      <div class="status-icon">
+        <i [class]="getStatusIcon()"></i>
+      </div>
+      <div class="status-text">
+        <span class="status-title">{{ getStatusTitle() }}</span>
+        <span class="status-subtitle" *ngIf="getStatusSubtitle()">{{ getStatusSubtitle() }}</span>
+      </div>
     </div>
 
-    <div class="col-12 col-md-4">
-      <h6 class="mb-1">Best</h6>
-      <h1 class="h2 mb-0">{{ getBestScoreForCurrentDeck() || "N/A" }}</h1>
+    <!-- Game Stats Row -->
+    <div class="stats-row">
+      <!-- Timer -->
+      <div class="stat-card timer-card" *ngIf="gameTimer() > 0">
+        <div class="stat-icon">
+          <i class="fas fa-clock" [class.pulse]="isGameActive()"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatTime(gameTimer()) }}</div>
+          <div class="stat-label">Time</div>
+        </div>
+      </div>
+
+      <!-- Current Attempts -->
+      <div class="stat-card attempts-card">
+        <div class="stat-icon">
+          <i class="fas fa-hand-pointer"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ currentAttempts() }}</div>
+          <div class="stat-label">Attempts</div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="stat-card progress-card">
+        <div class="stat-icon">
+          <i class="fas fa-chart-pie"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ Math.round(gameProgress()) }}%</div>
+          <div class="stat-label">Progress</div>
+        </div>
+        <div class="progress-ring" [style.background]="getProgressRingColor()">
+          <div class="progress-fill" [style.width.%]="gameProgress()"></div>
+        </div>
+      </div>
+
+      <!-- Best Score -->
+      <div class="stat-card best-card">
+        <div class="stat-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ getBestScoreForCurrentDeck() || "--" }}</div>
+          <div class="stat-label">Best</div>
+        </div>
+      </div>
     </div>
 
-    <div class="col-12 col-md-4 text-md-end">
-      <button
-        type="button"
-        class="btn btn-danger"
+    <!-- Game Controls -->
+    <div class="game-controls">
+      <button 
+        class="control-btn pause-btn"
+        [disabled]="!isGameActive()"
+        (click)="togglePause()"
+        [attr.aria-label]="isPaused() ? 'Resume game' : 'Pause game'">
+        <i [class]="isPaused() ? 'fas fa-play' : 'fas fa-pause'"></i>
+        <span>{{ isPaused() ? 'Resume' : 'Pause' }}</span>
+      </button>
+
+      <button 
+        class="control-btn restart-btn"
         (click)="openModal(confirmModal)"
-        [disabled]="(isProcessing$ | async) === true"
-        aria-label="Restart game"
-      >
-        Restart
+        [disabled]="isProcessing()"
+        aria-label="Restart game">
+        <i class="fas fa-redo-alt"></i>
+        <span>Restart</span>
+      </button>
+
+      <button 
+        class="control-btn menu-btn"
+        routerLink="/"
+        aria-label="Back to menu">
+        <i class="fas fa-home"></i>
+        <span>Menu</span>
       </button>
     </div>
   </div>
 </div>
 
-<!-- JÁTÉKTÉR -->
-<section
-  class="cardContainer"
-  [class.disabled]="(isProcessing$ | async) === true"
-  [attr.aria-busy]="isProcessing$ | async"
-  aria-live="polite"
->
-  <div
-    class="card-flipper"
-    *ngFor="let card of cardList$ | async; trackBy: trackByCardId"
-    [class.flipped]="card.flipped"
-    [class.card-matched]="card.matched"
-    (click)="revealCard(card)"
-    role="button"
-    tabindex="0"
-    [attr.aria-pressed]="card.flipped"
-    [attr.aria-label]="card.flipped ? card.name || 'Face-down card' : 'Card'"
-  >
-    <!-- ELŐLAP -->
-    <div class="card card-back">
-      <img
-        [src]="card.icon"
-        [alt]="card.name || 'card icon'"
-        class="img-fluid"
-        draggable="false"
-      />
+<!-- Game Board -->
+<div class="game-board-container">
+  <div class="game-board" [class.disabled]="isProcessing()" [attr.aria-busy]="isProcessing()">
+    <!-- Cards Grid -->
+    <div class="cards-grid" [style.--cards-count]="cards().length">
+      <div
+        class="card-container"
+        *ngFor="let card of cards(); trackBy: trackByCardId; let i = index"
+        [style.animation-delay]="i * 50 + 'ms'"
+        [class.animate-in]="shouldAnimateCardIn(i)">
+        
+        <div
+          class="card-flipper"
+          [class.flipped]="card.flipped"
+          [class.matched]="card.matched"
+          [class.processing]="isProcessing() && isCardBeingProcessed(card)"
+          [class.clickable]="canFlipCard() && card.isClickable()"
+          (click)="revealCard(card)"
+          (keydown.enter)="revealCard(card)"
+          (keydown.space)="revealCard(card); $event.preventDefault()"
+          role="button"
+          tabindex="0"
+          [attr.aria-pressed]="card.flipped"
+          [attr.aria-label]="getCardAriaLabel(card)">
+          
+          <!-- Card Back (face up - shows image) -->
+          <div class="card card-back">
+            <div class="card-content">
+              <img
+                [src]="card.icon"
+                [alt]="card.name || 'card icon'"
+                class="card-image"
+                draggable="false"
+                loading="lazy" />
+              <div class="card-name">{{ card.name }}</div>
+            </div>
+            <div class="card-shine"></div>
+          </div>
+
+          <!-- Card Front (face down) -->
+          <div 
+            class="card card-front" 
+            [style.background]="getCardFrontGradient(card)">
+            <div class="card-pattern">
+              <div class="pattern-circle" *ngFor="let circle of [1,2,3,4,5,6]"></div>
+            </div>
+            <div class="card-logo">
+              <i class="fas fa-puzzle-piece"></i>
+            </div>
+            <div class="card-shine"></div>
+          </div>
+
+          <!-- Match indicator -->
+          <div class="match-indicator" *ngIf="card.matched">
+            <i class="fas fa-check-circle"></i>
+          </div>
+
+          <!-- Processing indicator -->
+          <div class="processing-indicator" *ngIf="isProcessing() && isCardBeingProcessed(card)">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- HÁTLAP – közös random szín minden leosztáskor -->
-    <div
-      class="card card-front"
-      [style.backgroundColor]="card.backColor || '#888888'"
-    ></div>
+    <!-- Game overlay for pause/processing states -->
+    <div class="game-overlay" *ngIf="isPaused() || isProcessing()" [class.paused]="isPaused()">
+      <div class="overlay-content">
+        <div class="overlay-icon" *ngIf="isPaused()">
+          <i class="fas fa-pause-circle"></i>
+        </div>
+        <div class="overlay-icon" *ngIf="isProcessing()">
+          <div class="loading-spinner"></div>
+        </div>
+        <div class="overlay-text">
+          <h3 *ngIf="isPaused()">Game Paused</h3>
+          <h3 *ngIf="isProcessing()">Processing...</h3>
+          <p *ngIf="isPaused()">Tap resume to continue</p>
+        </div>
+      </div>
+    </div>
   </div>
-</section>
 
-<!-- MODAL -->
+  <!-- Game completion celebration -->
+  <div class="celebration-overlay" *ngIf="isGameWon()" [@celebrationAnimation]>
+    <div class="celebration-content">
+      <div class="celebration-icon">
+        <i class="fas fa-trophy"></i>
+      </div>
+      <h2>Congratulations! 🎉</h2>
+      <p>You completed the game in {{ currentAttempts() }} attempts!</p>
+      <div class="celebration-stats" *ngIf="isNewBestScore()">
+        <div class="new-record">
+          <i class="fas fa-medal"></i>
+          <span>New Best Score!</span>
+        </div>
+      </div>
+    </div>
+    <div class="confetti" *ngFor="let confetti of [1,2,3,4,5,6,7,8,9,10]"></div>
+  </div>
+</div>
+
+<!-- Restart Confirmation Modal -->
 <ng-template #confirmModal>
-  <div class="modal-header">
-    <h4 class="modal-title">Begin a new game?</h4>
+  <div class="modal-header modern-modal-header">
+    <div class="modal-icon warning-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h4 class="modal-title">Restart Game?</h4>
     <button
       type="button"
-      class="btn-close"
+      class="btn-close modern-close-btn"
       aria-label="Close"
-      (click)="modalRef?.hide()"
-    ></button>
-  </div>
-
-  <div class="modal-body">
-    If you click “New game”, your current progress will be lost.
-  </div>
-
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modalRef?.hide()">
-      Close
+      (click)="modalRef?.hide()">
+      <i class="fas fa-times"></i>
     </button>
-    <button type="button" class="btn btn-primary" (click)="restartGame()">
-      New game
+  </div>
+
+  <div class="modal-body modern-modal-body">
+    <p class="warning-text">
+      <i class="fas fa-info-circle"></i>
+      Your current progress will be lost if you start a new game.
+    </p>
+    
+    <div class="current-progress" *ngIf="gameProgress() > 0">
+      <div class="progress-info">
+        <span class="progress-label">Current Progress:</span>
+        <span class="progress-value">{{ Math.round(gameProgress()) }}% complete</span>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" [style.width.%]="gameProgress()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer modern-modal-footer">
+    <button 
+      type="button" 
+      class="btn secondary-btn" 
+      (click)="modalRef?.hide()">
+      <i class="fas fa-arrow-left"></i>
+      <span>Continue Playing</span>
+    </button>
+    <button 
+      type="button" 
+      class="btn primary-btn restart-confirm-btn" 
+      (click)="restartGame()">
+      <i class="fas fa-redo-alt"></i>
+      <span>Start New Game</span>
     </button>
   </div>
 </ng-template>
