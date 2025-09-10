@@ -57,12 +57,14 @@ describe('GameLogicService', () => {
 
   it('should start a new game with a valid deck size', async () => {
     await service.newGame(4); // Use even number that matches available mock cards
-    
+
     // Check if game was started by observing cardList$
-    void service.cardList$.subscribe(cards => {
-      void expect(cards.length).toBeGreaterThan(0);
-    }).unsubscribe();
-    
+    void service.cardList$
+      .subscribe(cards => {
+        void expect(cards.length).toBeGreaterThan(0);
+      })
+      .unsubscribe();
+
     void expect(notificationService.showInfo).toHaveBeenCalled();
   });
 
@@ -73,13 +75,13 @@ describe('GameLogicService', () => {
 
   it('should reveal a card using card ID', async () => {
     await service.newGame(4);
-    
+
     // Create a mock card to test with
     const testCard = new Card({ id: 'test-1', name: 'Test', icon: 'test.png', flipped: false, matched: false });
-    
+
     // Since revealCard uses card.id, we can test it with any card that has an ID
     service.revealCard(testCard);
-    
+
     // The actual flipping is handled by GameStateManager, so we just verify the method was called
     void expect(service).toBeTruthy(); // Basic verification
   });
