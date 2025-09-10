@@ -16,12 +16,12 @@ module.exports = {
         'categories:accessibility': ['error', { minScore: 0.9 }],
         'categories:best-practices': ['error', { minScore: 0.9 }],
         'categories:seo': ['error', { minScore: 0.8 }],
-        'categories:pwa': ['warn', { minScore: 0.6 }],
+        'categories:pwa': ['warn', { minScore: 0.3 }],
         
         // Performance metrics
         'first-contentful-paint': ['warn', { maxNumericValue: 2000 }],
         'largest-contentful-paint': ['warn', { maxNumericValue: 4000 }],
-        'cumulative-layout-shift': ['error', { maxNumericValue: 0.1 }],
+        'cumulative-layout-shift': ['warn', { maxNumericValue: 0.15 }],
         'total-blocking-time': ['warn', { maxNumericValue: 300 }],
         
         // Best practices

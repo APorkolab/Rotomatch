@@ -6,6 +6,22 @@ body {
   background-color: #f0f2f5; /* A light, clean background color */
 }
 
+/* Prevent layout shifts and improve CLS */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Ensure consistent sizing for dynamic content */
+.card, .btn, .modal {
+  contain: layout;
+}
+
+/* Smooth transitions to reduce perceived layout shifts */
+* {
+  transition: all 0.15s ease-in-out;
+}
+
 /* Keep bootstrap placeholder styles if they are used */
 .bd-placeholder-img {
   font-size: 1.125rem;
