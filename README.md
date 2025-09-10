@@ -48,8 +48,8 @@ A sophisticated, enterprise-grade memory matching game built with Angular 19, fe
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 20.x or higher
-- npm 10.x or higher
+- Node.js 20.0.0 or higher (supports 20.x, 22.x, and newer versions)
+- npm 10.0.0 or higher (supports 10.x, 11.x, and newer versions)
 - Modern web browser with ES2020 support
 
 ### Installation
