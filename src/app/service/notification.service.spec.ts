@@ -11,6 +11,6 @@ describe('NotificationService', () => {
   });
 
   it('should be created', () => {
-    expect(service).toBeTruthy();
+    void expect(service).toBeTruthy();
   });
 });

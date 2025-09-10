@@ -10,7 +10,7 @@ interface NotificationConfig {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class NotificationService {
   private readonly defaultConfig: Partial<IndividualConfig> = {
@@ -20,11 +20,11 @@ export class NotificationService {
     preventDuplicates: true
   };
 
-  constructor(private toastr: ToastrService) {}
+  public constructor(private readonly toastr: ToastrService) {}
 
   public showSuccess(
-    message: string, 
-    title: string = 'Success', 
+    message: string,
+    title: string = 'Success',
     config?: NotificationConfig
   ): void {
     const options = this.buildConfig(config);
@@ -32,8 +32,8 @@ export class NotificationService {
   }
 
   public showError(
-    message: string, 
-    title: string = 'Error', 
+    message: string,
+    title: string = 'Error',
     config?: NotificationConfig
   ): void {
     const options = this.buildConfig({
@@ -44,8 +44,8 @@ export class NotificationService {
   }
 
   public showInfo(
-    message: string, 
-    title: string = 'Info', 
+    message: string,
+    title: string = 'Info',
     config?: NotificationConfig
   ): void {
     const options = this.buildConfig(config);
@@ -53,8 +53,8 @@ export class NotificationService {
   }
 
   public showWarning(
-    message: string, 
-    title: string = 'Warning', 
+    message: string,
+    title: string = 'Warning',
     config?: NotificationConfig
   ): void {
     const options = this.buildConfig({
@@ -87,9 +87,9 @@ export class NotificationService {
     time?: number,
     isNewRecord: boolean = false
   ): void {
-    const timeText = time ? ` in ${this.formatTime(time)}` : '';
+    const timeText = (time != null && time > 0) ? ` in ${this.formatTime(time)}` : '';
     const recordText = isNewRecord ? ' 🎉 New Record!' : '';
-    
+
     this.showSuccess(
       `Completed in ${attempts} attempts${timeText}${recordText}`,
       '🎊 Congratulations!',
@@ -125,7 +125,7 @@ export class NotificationService {
     const seconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    
+
     if (minutes > 0) {
       return `${minutes}m ${remainingSeconds}s`;
     }

@@ -43,8 +43,8 @@ export class ConfigService {
   }
 
   public isValidDeckSize(size: number): boolean {
-    return size >= this.config.game.minDeckSize && 
-           size <= this.config.game.maxDeckSize && 
+    return size >= this.config.game.minDeckSize &&
+           size <= this.config.game.maxDeckSize &&
            size % 2 === 0;
   }
 

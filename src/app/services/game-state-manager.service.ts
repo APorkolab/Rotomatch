@@ -1,11 +1,10 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, interval, takeUntil, map } from 'rxjs';
-import { 
-  ICard, 
-  IGameSession, 
-  IGameStats, 
-  IGameSettings, 
-  GameState, 
+import { Subject, interval, takeUntil } from 'rxjs';
+import {
+  IGameSession,
+  IGameStats,
+  IGameSettings,
+  GameState,
   GameDifficulty,
   IBestScores,
   CardState
@@ -39,7 +38,7 @@ export class GameStateManagerService {
   // Computed game statistics
   public readonly currentStats = computed(() => {
     const session = this._currentSession();
-    return session?.stats || null;
+    return session?.stats ?? null;
   });
 
   public readonly gameProgress = computed(() => {
@@ -50,8 +49,8 @@ export class GameStateManagerService {
   });
 
   public readonly canFlipCard = computed(() => {
-    return !this._isProcessing() && 
-           this._gameState() === GameState.PLAYING && 
+    return !this._isProcessing() &&
+           this._gameState() === GameState.PLAYING &&
            !this._isPaused() &&
            this._flippedCards().length < 2;
   });
@@ -73,11 +72,11 @@ export class GameStateManagerService {
   public readonly gameReset$ = this._gameReset$.asObservable();
 
   // Timer management
-  private timerDestroy$ = new Subject<void>();
+  private readonly timerDestroy$ = new Subject<void>();
 
-  constructor(
-    private configService: ConfigService,
-    private errorHandler: ErrorHandlerService
+  public constructor(
+    private readonly configService: ConfigService,
+    private readonly errorHandler: ErrorHandlerService
   ) {
     this.initializeDefaultState();
   }
@@ -188,7 +187,7 @@ export class GameStateManagerService {
 
     const cards = this._cards();
     const cardIndex = cards.findIndex(c => c.id === cardId);
-    
+
     if (cardIndex === -1) {
       this.errorHandler.createError(
         ErrorCode.INVALID_GAME_STATE,
@@ -208,7 +207,7 @@ export class GameStateManagerService {
     updatedCards[cardIndex] = flippedCard;
 
     this._cards.set(updatedCards);
-    
+
     const currentFlipped = this._flippedCards();
     const newFlippedCards = [...currentFlipped, flippedCard];
     this._flippedCards.set(newFlippedCards);
@@ -284,7 +283,7 @@ export class GameStateManagerService {
    */
   private handleMismatch(card1: Card, card2: Card, stats: IGameStats): void {
     const difficultySettings = this.configService.getDifficultySettings(stats.difficulty);
-    
+
     setTimeout(() => {
       const cards = this._cards();
       const updatedCards = cards.map(card => {
@@ -308,7 +307,7 @@ export class GameStateManagerService {
    */
   private handleGameWon(stats: IGameStats): void {
     this.stopTimer();
-    
+
     const finalStats = {
       ...stats,
       endTime: new Date(),
@@ -318,10 +317,10 @@ export class GameStateManagerService {
     this.updateSessionStats(finalStats);
     this._gameState.set(GameState.WON);
     this._gameWon$.next(finalStats);
-    
+
     // Update best scores
     this.updateBestScores(finalStats);
-    
+
     // Clear saved game state
     this.clearSavedGameState();
   }
@@ -356,7 +355,7 @@ export class GameStateManagerService {
     this._gameTimer.set(0);
     this._isPaused.set(false);
     this._currentSession.set(null);
-    
+
     this.clearSavedGameState();
     this._gameReset$.next();
   }
@@ -366,7 +365,7 @@ export class GameStateManagerService {
    */
   private startTimer(): void {
     this.stopTimer();
-    
+
     interval(1000).pipe(
       takeUntil(this.timerDestroy$)
     ).subscribe(() => {
@@ -432,7 +431,7 @@ export class GameStateManagerService {
    */
   public saveGameState(): void {
     const session = this._currentSession();
-    if (session && session.settings.autoSave) {
+    if (session?.settings?.autoSave === true) {
       const storageKey = this.configService.getStorageConfig().gameStateKey;
       this.errorHandler.safeStorageOperation(
         () => localStorage.setItem(storageKey, JSON.stringify({
@@ -454,15 +453,15 @@ export class GameStateManagerService {
       'Failed to load game state'
     );
 
-    if (savedState) {
+    if (savedState != null && savedState.length > 0) {
       try {
         const parsed = JSON.parse(savedState);
         const session = parsed.session as IGameSession;
-        
+
         // Convert plain objects back to Card instances
         const cards = session.cards.map(cardData => new Card(cardData));
         const flippedCards = session.flippedCards.map(cardData => new Card(cardData));
-        
+
         this._currentSession.set({
           ...session,
           cards,
@@ -471,10 +470,10 @@ export class GameStateManagerService {
         this._cards.set(cards);
         this._flippedCards.set(flippedCards);
         this._gameState.set(session.state);
-        this._gameTimer.set(parsed.gameTimer || 0);
-        this._isPaused.set(parsed.isPaused || false);
+        this._gameTimer.set(parsed.gameTimer ?? 0);
+        this._isPaused.set(parsed.isPaused ?? false);
 
-        if (session.state === GameState.PLAYING && !parsed.isPaused) {
+        if (session.state === GameState.PLAYING && parsed.isPaused !== true) {
           this.startTimer();
         }
 
@@ -514,10 +513,10 @@ export class GameStateManagerService {
       const bestScores: IBestScores = JSON.parse(currentBest);
       const deckSize = stats.deckSize;
       const currentAttempts = stats.attempts;
-      const gameTime = stats.endTime && stats.startTime ? 
+      const gameTime = (stats.endTime != null && stats.startTime != null) ?
         stats.endTime.getTime() - stats.startTime.getTime() : 0;
 
-      if (!bestScores[deckSize] || currentAttempts < bestScores[deckSize].attempts) {
+      if (bestScores[deckSize] == null || currentAttempts < bestScores[deckSize].attempts) {
         bestScores[deckSize] = {
           attempts: currentAttempts,
           time: gameTime,

@@ -10,7 +10,7 @@ describe('RulesComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ RulesComponent ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -20,6 +20,6 @@ describe('RulesComponent', () => {
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    void expect(component).toBeTruthy();
   });
 });

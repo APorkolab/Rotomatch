@@ -74,13 +74,13 @@
       
       <div class="deck-size-grid">
         <div class="deck-size-card" 
-             *ngFor="let size of deckSizes"
+             *ngFor="let size of deckSizes; trackBy: trackByDeckSize"
              [class.selected]="selectedDeckSize === size"
              [class.recommended]="size === 12"
              (click)="selectDeckSize(size)">
           <div class="deck-size-number">{{size}}</div>
           <div class="deck-size-label">{{size / 2}} pairs</div>
-          <div class="difficulty-indicator" [class]="getDifficultyClass(size)"></div>
+          <div class="difficulty-indicator" [ngClass]="getDifficultyClass(size)"></div>
           <span class="recommended-badge" *ngIf="size === 12">Recommended</span>
         </div>
       </div>

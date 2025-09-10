@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
-    selector: 'app-rules',
-    templateUrl: './rules.component.html',
-    styleUrls: ['./rules.component.scss'],
-    standalone: true
+  selector: 'app-rules',
+  templateUrl: './rules.component.html',
+  styleUrls: ['./rules.component.scss'],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class RulesComponent implements OnInit {
+export class RulesComponent {
 
-  constructor() { }
+  public constructor() { }
 
-  ngOnInit(): void {
-  }
+  // ngOnInit removed as it was empty
 
 }

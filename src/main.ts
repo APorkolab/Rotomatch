@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'rules', component: RulesComponent },
   { path: 'contact', component: ContactComponent },
-  { path: 'game', component: GameComponent },
+  { path: 'game', component: GameComponent }
 ];
 
 bootstrapApplication(AppComponent, {
@@ -35,8 +35,8 @@ bootstrapApplication(AppComponent, {
       closeButton: true,
       preventDuplicates: true,
       timeOut: 5000,
-      extendedTimeOut: 3000,
+      extendedTimeOut: 3000
     }),
-    importProvidersFrom(ModalModule.forRoot(), CollapseModule.forRoot()),
+    importProvidersFrom(ModalModule.forRoot(), CollapseModule.forRoot())
   ]
 }).catch(err => console.error(err));

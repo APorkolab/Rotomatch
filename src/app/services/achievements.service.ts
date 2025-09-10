@@ -61,18 +61,18 @@ export enum AchievementCategory {
 export class AchievementsService {
   private readonly _gameStats = signal<GameStats>(this.getDefaultStats());
   private readonly _unlockedAchievements = signal<Achievement[]>([]);
-  
+
   public readonly gameStats = this._gameStats.asReadonly();
   public readonly unlockedAchievements = this._unlockedAchievements.asReadonly();
-  
+
   // Computed achievement progress
   public readonly totalAchievements = computed(() => this.achievements.length);
   public readonly unlockedCount = computed(() => this._unlockedAchievements().length);
-  public readonly achievementProgress = computed(() => 
+  public readonly achievementProgress = computed(() =>
     (this.unlockedCount() / this.totalAchievements()) * 100
   );
-  
-  public readonly totalAchievementPoints = computed(() => 
+
+  public readonly totalAchievementPoints = computed(() =>
     this._unlockedAchievements().reduce((sum, achievement) => sum + achievement.points, 0)
   );
 
@@ -106,15 +106,15 @@ export class AchievementsService {
       points: 50,
       category: AchievementCategory.SKILL
     },
-    
+
     // Skill achievements
     {
       id: 'master_small',
       name: 'Small Deck Master',
       description: 'Win 10 games with 6 cards or fewer',
       icon: '🃏',
-      condition: (stats) => {
-        return [2, 4, 6].reduce((sum, size) => 
+      condition: (stats): boolean => {
+        return [2, 4, 6].reduce((sum, size) =>
           sum + (stats.deckSizeStats[size]?.gamesWon || 0), 0) >= 10;
       },
       points: 30,
@@ -125,8 +125,8 @@ export class AchievementsService {
       name: 'Large Deck Champion',
       description: 'Win 10 games with 16 cards or more',
       icon: '👑',
-      condition: (stats) => {
-        return [16, 18, 20].reduce((sum, size) => 
+      condition: (stats): boolean => {
+        return [16, 18, 20].reduce((sum, size) =>
           sum + (stats.deckSizeStats[size]?.gamesWon || 0), 0) >= 10;
       },
       points: 50,
@@ -137,14 +137,14 @@ export class AchievementsService {
       name: 'Difficulty Master',
       description: 'Win at least 5 games on each difficulty',
       icon: '🎯',
-      condition: (stats) => {
-        return Object.values(GameDifficulty).every(diff => 
+      condition: (stats): boolean => {
+        return Object.values(GameDifficulty).every(diff =>
           stats.difficultyStats[diff].gamesWon >= 5);
       },
       points: 100,
       category: AchievementCategory.MASTERY
     },
-    
+
     // Speed achievements
     {
       id: 'speed_demon',
@@ -164,7 +164,7 @@ export class AchievementsService {
       points: 100,
       category: AchievementCategory.SPEED
     },
-    
+
     // Persistence achievements
     {
       id: 'persistent',
@@ -193,14 +193,14 @@ export class AchievementsService {
       points: 200,
       category: AchievementCategory.MASTERY
     },
-    
+
     // Special achievements
     {
       id: 'comeback_kid',
       name: 'Comeback Kid',
       description: 'Win after using more than 50 attempts',
       icon: '🎢',
-      condition: (stats) => {
+      condition: (stats): boolean => {
         // This would need special tracking of individual game attempts
         return stats.totalGamesWon > 0; // Placeholder condition
       },
@@ -212,7 +212,7 @@ export class AchievementsService {
       name: 'Perfectionist',
       description: 'Get perfect scores on 3 different deck sizes',
       icon: '🏆',
-      condition: (stats) => {
+      condition: (stats): boolean => {
         const perfectSizes = Object.entries(stats.bestAttempts)
           .filter(([size, attempts]) => attempts === parseInt(size) / 2)
           .length;
@@ -223,10 +223,10 @@ export class AchievementsService {
     }
   ];
 
-  constructor(
-    private notificationService: NotificationService,
-    private errorHandler: ErrorHandlerService,
-    private configService: ConfigService
+  public constructor(
+    private readonly notificationService: NotificationService,
+    private readonly errorHandler: ErrorHandlerService,
+    private readonly configService: ConfigService
   ) {
     this.loadStats();
   }
@@ -236,9 +236,9 @@ export class AchievementsService {
    */
   public updateGameStats(gameStats: IGameStats): void {
     const currentStats = this._gameStats();
-    const gameTime = gameStats.endTime && gameStats.startTime ? 
+    const gameTime = (gameStats.endTime != null && gameStats.startTime != null) ?
       gameStats.endTime.getTime() - gameStats.startTime.getTime() : 0;
-    
+
     const isPerfectGame = gameStats.attempts === gameStats.deckSize / 2;
     const isWin = gameStats.completionPercentage === 100;
 
@@ -248,11 +248,11 @@ export class AchievementsService {
       totalGamesWon: isWin ? currentStats.totalGamesWon + 1 : currentStats.totalGamesWon,
       totalAttempts: currentStats.totalAttempts + gameStats.attempts,
       perfectGames: isPerfectGame ? currentStats.perfectGames + 1 : currentStats.perfectGames,
-      
+
       // Update streaks
       streaks: {
         currentWinStreak: isWin ? currentStats.streaks.currentWinStreak + 1 : 0,
-        longestWinStreak: isWin ? 
+        longestWinStreak: isWin ?
           Math.max(currentStats.streaks.longestWinStreak, currentStats.streaks.currentWinStreak + 1) :
           currentStats.streaks.longestWinStreak
       },
@@ -280,7 +280,7 @@ export class AchievementsService {
         ...currentStats.difficultyStats,
         [gameStats.difficulty]: {
           gamesPlayed: currentStats.difficultyStats[gameStats.difficulty].gamesPlayed + 1,
-          gamesWon: isWin ? 
+          gamesWon: isWin ?
             currentStats.difficultyStats[gameStats.difficulty].gamesWon + 1 :
             currentStats.difficultyStats[gameStats.difficulty].gamesWon,
           averageAttempts: this.calculateNewAverage(
@@ -306,7 +306,7 @@ export class AchievementsService {
         ...currentStats.deckSizeStats,
         [gameStats.deckSize]: {
           gamesPlayed: (currentStats.deckSizeStats[gameStats.deckSize]?.gamesPlayed || 0) + 1,
-          gamesWon: isWin ? 
+          gamesWon: isWin ?
             (currentStats.deckSizeStats[gameStats.deckSize]?.gamesWon || 0) + 1 :
             (currentStats.deckSizeStats[gameStats.deckSize]?.gamesWon || 0),
           averageAttempts: this.calculateNewAverage(
@@ -329,8 +329,8 @@ export class AchievementsService {
   private checkForNewAchievements(stats: GameStats): void {
     const currentUnlocked = this._unlockedAchievements();
     const currentUnlockedIds = new Set(currentUnlocked.map(a => a.id));
-    
-    const newAchievements = this.achievements.filter(achievement => 
+
+    const newAchievements = this.achievements.filter(achievement =>
       !currentUnlockedIds.has(achievement.id) && achievement.condition(stats)
     );
 
@@ -339,10 +339,10 @@ export class AchievementsService {
         ...a,
         unlockedAt: new Date()
       }))];
-      
+
       this._unlockedAchievements.set(updatedUnlocked);
       this.saveUnlockedAchievements();
-      
+
       // Show notifications for new achievements
       newAchievements.forEach(achievement => {
         this.notificationService.showAchievement(
@@ -358,7 +358,7 @@ export class AchievementsService {
    */
   public getAllAchievements(): (Achievement & { unlocked: boolean })[] {
     const unlockedIds = new Set(this._unlockedAchievements().map(a => a.id));
-    
+
     return this.achievements.map(achievement => ({
       ...achievement,
       unlocked: unlockedIds.has(achievement.id),
@@ -376,7 +376,7 @@ export class AchievementsService {
   /**
    * Gets detailed statistics for UI display
    */
-  public getDetailedStats() {
+  public getDetailedStats(): object {
     const stats = this._gameStats();
     return {
       overview: {
@@ -406,7 +406,7 @@ export class AchievementsService {
     this._unlockedAchievements.set([]);
     this.saveStats();
     this.saveUnlockedAchievements();
-    
+
     this.notificationService.showInfo(
       'All statistics and achievements have been reset.',
       'Statistics Reset'
@@ -472,13 +472,13 @@ export class AchievementsService {
       'Failed to load game statistics'
     );
 
-    if (savedStats) {
+    if (savedStats != null && savedStats.length > 0) {
       try {
         const parsed = JSON.parse(savedStats);
         // Merge with default to ensure all properties exist
         const mergedStats = { ...this.getDefaultStats(), ...parsed };
         this._gameStats.set(mergedStats);
-      } catch (error) {
+      } catch {
         console.warn('Failed to parse saved statistics, using defaults');
       }
     }
@@ -509,11 +509,11 @@ export class AchievementsService {
       'Failed to load achievements'
     );
 
-    if (savedAchievements) {
+    if (savedAchievements != null && savedAchievements.length > 0) {
       try {
         const parsed = JSON.parse(savedAchievements);
         this._unlockedAchievements.set(parsed);
-      } catch (error) {
+      } catch {
         console.warn('Failed to parse saved achievements');
       }
     }

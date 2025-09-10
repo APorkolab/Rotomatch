@@ -7,29 +7,29 @@ import { NotificationService } from './notification.service';
 })
 export class GameStateService {
 
-  private selectedDeckSize = new BehaviorSubject<number>(0);
-  currentSelectedDeckSize = this.selectedDeckSize.asObservable();
+  private readonly selectedDeckSize = new BehaviorSubject<number>(0);
+  public currentSelectedDeckSize = this.selectedDeckSize.asObservable();
 
-  private newGameWanted = new BehaviorSubject<boolean>(false);
-  currentNewGameWanted = this.newGameWanted.asObservable();
+  private readonly newGameWanted = new BehaviorSubject<boolean>(false);
+  public currentNewGameWanted = this.newGameWanted.asObservable();
 
-  constructor(private message: NotificationService) { }
+  public constructor(private readonly message: NotificationService) { }
 
-  changeSelectedDeckSize(value: number) {
+  public changeSelectedDeckSize(value: number): void {
     this.selectedDeckSize.next(value);
   }
 
-  changeNewGameWanted(value: boolean) {
+  public changeNewGameWanted(value: boolean): void {
     this.newGameWanted.next(value);
   }
 
-  selectDeckSize(value: number): void {
+  public selectDeckSize(value: number): void {
     this.changeSelectedDeckSize(value);
     this.changeNewGameWanted(true);
   }
 
-  convertStringToNumber(input: string): number {
-    let numeric = Number(input);
+  public convertStringToNumber(input: string): number {
+    const numeric = Number(input);
     if (isNaN(numeric)) {
       this.message.showError('Invalid number format', 'Error');
       return 0;

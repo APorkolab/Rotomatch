@@ -13,7 +13,7 @@ export class Card implements ICard {
   public backColor?: string;
   public state: CardState = CardState.FACE_DOWN;
 
-  constructor(data: Partial<ICard> & { id: number | string; name: string; icon: string }) {
+  public constructor(data: Partial<ICard> & { id: number | string; name: string; icon: string }) {
     this.id = data.id;
     this.name = data.name;
     this.icon = data.icon;
@@ -38,9 +38,9 @@ export class Card implements ICard {
    * Flips the card and updates its state
    */
   public flip(): Card {
-    return this.clone({ 
-      flipped: !this.flipped, 
-      state: this.flipped ? CardState.FACE_DOWN : CardState.FACE_UP 
+    return this.clone({
+      flipped: !this.flipped,
+      state: this.flipped ? CardState.FACE_DOWN : CardState.FACE_UP
     });
   }
 
@@ -48,10 +48,10 @@ export class Card implements ICard {
    * Marks the card as matched
    */
   public markAsMatched(): Card {
-    return this.clone({ 
-      matched: true, 
-      flipped: true, 
-      state: CardState.MATCHED 
+    return this.clone({
+      matched: true,
+      flipped: true,
+      state: CardState.MATCHED
     });
   }
 
@@ -59,10 +59,10 @@ export class Card implements ICard {
    * Resets the card to face down state
    */
   public reset(): Card {
-    return this.clone({ 
-      flipped: false, 
-      matched: false, 
-      state: CardState.FACE_DOWN 
+    return this.clone({
+      flipped: false,
+      matched: false,
+      state: CardState.FACE_DOWN
     });
   }
 

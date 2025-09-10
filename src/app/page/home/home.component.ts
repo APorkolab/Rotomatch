@@ -21,22 +21,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   public readonly deckSizes = DECK_SIZE_OPTIONS;
   public selectedDeckSize: number | null = null;
   public selectedDifficulty: GameDifficulty | null = null;
-  
+
   // Statistics for display
   public hasGameHistory = false;
   public hasSavedGame = false;
   public totalWins = 0;
   public achievementCount = 0;
   public winRate = 0;
-  
-  private subscriptions = new Subscription();
 
-  constructor(
-    private router: Router,
-    private gameLogic: GameLogicService,
-    private achievementsService: AchievementsService,
-    private gameStateManager: GameStateManagerService,
-    private notificationService: NotificationService
+  private readonly subscriptions = new Subscription();
+
+  public constructor(
+    private readonly router: Router,
+    private readonly gameLogic: GameLogicService,
+    private readonly achievementsService: AchievementsService,
+    private readonly gameStateManager: GameStateManagerService,
+    private readonly notificationService: NotificationService
   ) {}
 
   public ngOnInit(): void {
@@ -84,7 +84,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Starts a new game with selected settings
    */
   public async startGame(): Promise<void> {
-    if (!this.selectedDeckSize || !this.selectedDifficulty) {
+    if (this.selectedDeckSize == null || this.selectedDifficulty == null) {
       this.notificationService.showWarning(
         'Please select both deck size and difficulty level',
         'Missing Settings'
@@ -94,8 +94,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     try {
       await this.gameLogic.newGame(this.selectedDeckSize, this.selectedDifficulty);
-      this.router.navigate(['/game']);
-    } catch (error) {
+      void this.router.navigate(['/game']);
+    } catch {
       this.notificationService.showError(
         'Failed to start game. Please try again.',
         'Game Error'
@@ -107,8 +107,8 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Continues saved game if available
    */
   public continueGame(): void {
-    if (this.gameLogic.loadSavedGame()) {
-      this.router.navigate(['/game']);
+    if (this.gameLogic.loadSavedGame() === true) {
+      void this.router.navigate(['/game']);
       this.notificationService.showInfo('Resumed saved game', 'Game Restored');
     } else {
       this.notificationService.showWarning(
@@ -123,7 +123,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   private loadUserStatistics(): void {
     const stats = this.achievementsService.getDetailedStats();
-    
+
     this.hasGameHistory = stats.overview.totalGames > 0;
     this.totalWins = stats.overview.totalWins;
     this.winRate = Math.round(stats.overview.winRate);
@@ -154,5 +154,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       // Keep last selections or set based on user's skill level
       this.selectedDifficulty = GameDifficulty.MEDIUM;
     }
+  }
+
+  /**
+   * TrackBy function for deck sizes
+   */
+  public trackByDeckSize(index: number, size: number): number {
+    return size;
   }
 }

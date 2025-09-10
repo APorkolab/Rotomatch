@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError, timer } from 'rxjs';
-import { retryWhen, mergeMap, finalize } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { retryWhen, mergeMap } from 'rxjs/operators';
+import { timer } from 'rxjs';
 import { IGameError } from '../types/game.types';
 import { NotificationService } from './notification.service';
 import { ConfigService } from './config.service';
@@ -21,17 +22,17 @@ export class ErrorHandlerService {
   private errorLog: IGameError[] = [];
   private readonly maxLogEntries = 100;
 
-  constructor(
-    private notificationService: NotificationService,
-    private configService: ConfigService
+  public constructor(
+    private readonly notificationService: NotificationService,
+    private readonly configService: ConfigService
   ) {}
 
   /**
    * Creates a standardized error object
    */
   public createError(
-    code: ErrorCode, 
-    message: string, 
+    code: ErrorCode,
+    message: string,
     details?: string
   ): IGameError {
     const error: IGameError = {
@@ -40,7 +41,7 @@ export class ErrorHandlerService {
       details,
       timestamp: new Date()
     };
-    
+
     this.logError(error);
     return error;
   }
@@ -54,27 +55,27 @@ export class ErrorHandlerService {
     showNotification: boolean = true
   ): Observable<T> {
     const retryAttempts = this.configService.getApiConfig().retryAttempts;
-    
+
     return source.pipe(
       retryWhen(errors =>
         errors.pipe(
           mergeMap((error, index) => {
             const retryCount = index + 1;
-            
+
             if (retryCount > retryAttempts) {
               const gameError = this.createError(
                 ErrorCode.NETWORK_ERROR,
                 `Failed after ${retryAttempts} retry attempts`,
                 error.message
               );
-              
+
               if (showNotification) {
                 this.showErrorNotification(gameError);
               }
-              
+
               return fallback !== undefined ? of(fallback) : throwError(() => gameError);
             }
-            
+
             // Exponential backoff
             const delay = Math.pow(2, retryCount - 1) * 1000;
             return timer(delay);
@@ -100,7 +101,7 @@ export class ErrorHandlerService {
         errorMessage,
         error instanceof Error ? error.message : String(error)
       );
-      
+
       this.showErrorNotification(gameError, false);
       return fallback;
     }
@@ -118,12 +119,12 @@ export class ErrorHandlerService {
       if (validator()) {
         return null; // Valid state
       }
-      
+
       const error = this.createError(
         ErrorCode.INVALID_GAME_STATE,
         errorMessage
       );
-      
+
       this.showErrorNotification(error, false);
       return recovery();
     } catch (error) {
@@ -132,7 +133,7 @@ export class ErrorHandlerService {
         'Unexpected error during state validation',
         error instanceof Error ? error.message : String(error)
       );
-      
+
       this.showErrorNotification(gameError);
       return recovery();
     }
@@ -145,11 +146,11 @@ export class ErrorHandlerService {
     const gameError = this.createError(
       ErrorCode.UNEXPECTED_ERROR,
       'An unexpected error occurred',
-      error.message + (error.stack ? `\n${error.stack}` : '')
+      error.message + (error.stack != null ? `\n${error.stack}` : '')
     );
-    
+
     this.showErrorNotification(gameError);
-    
+
     // In production, you might want to send this to a logging service
     if (this.configService.isProduction()) {
       this.sendErrorToLoggingService(gameError);
@@ -161,7 +162,7 @@ export class ErrorHandlerService {
    */
   private showErrorNotification(error: IGameError, isError: boolean = true): void {
     const userFriendlyMessage = this.getUserFriendlyMessage(error);
-    
+
     if (isError) {
       this.notificationService.showError(userFriendlyMessage, 'Error');
     } else {
@@ -194,12 +195,12 @@ export class ErrorHandlerService {
    */
   private logError(error: IGameError): void {
     this.errorLog.push(error);
-    
+
     // Keep only the latest errors
     if (this.errorLog.length > this.maxLogEntries) {
       this.errorLog = this.errorLog.slice(-this.maxLogEntries);
     }
-    
+
     // Console log in development
     if (!this.configService.isProduction()) {
       console.error('Game Error:', error);

@@ -2,7 +2,7 @@
 <div class="game-header">
   <div class="header-content">
     <!-- Game Status Banner -->
-    <div class="game-status-banner" [class]="getGameStatusClass()">
+    <div class="game-status-banner" [ngClass]="getGameStatusClass()">
       <div class="status-icon">
         <i [class]="getStatusIcon()"></i>
       </div>
@@ -137,7 +137,7 @@
             class="card card-front" 
             [style.background]="getCardFrontGradient(card)">
             <div class="card-pattern">
-              <div class="pattern-circle" *ngFor="let circle of [1,2,3,4,5,6]"></div>
+              <div class="pattern-circle" *ngFor="let circle of [1,2,3,4,5,6]; trackBy: trackByIndex"></div>
             </div>
             <div class="card-logo">
               <i class="fas fa-puzzle-piece"></i>
@@ -191,7 +191,7 @@
         </div>
       </div>
     </div>
-    <div class="confetti" *ngFor="let confetti of [1,2,3,4,5,6,7,8,9,10]"></div>
+    <div class="confetti" *ngFor="let confetti of [1,2,3,4,5,6,7,8,9,10]; trackBy: trackByIndex"></div>
   </div>
 </div>
 

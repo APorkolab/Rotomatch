@@ -1,6 +1,7 @@
 {
   "name": "rotomatch",
   "version": "1.0.0",
+  "type": "module",
   "engines": {
     "node": "20.x",
     "npm": "10.x"
@@ -65,26 +66,27 @@
     "@angular/localize": "^19.2.14",
     "@types/jasmine": "^5.1.4",
     "@types/jasminewd2": "^2.0.13",
+    "@types/lodash-es": "^4.17.0",
     "@types/node": "^22.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.33.1",
     "@typescript-eslint/utils": "^8.33.1",
+    "concurrently": "^8.0.0",
+    "cross-env": "^7.0.0",
     "eslint": "^9.28.0",
+    "husky": "^8.0.0",
     "jasmine-core": "~5.2.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.1",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.3",
-    "prettier": "^3.0.0",
-    "husky": "^8.0.0",
     "lint-staged": "^15.0.0",
+    "npm-run-all": "^4.1.0",
+    "prettier": "^3.0.0",
     "rimraf": "^5.0.0",
-    "webpack-bundle-analyzer": "^4.9.0",
-    "@types/lodash-es": "^4.17.0",
-    "concurrently": "^8.0.0",
-    "cross-env": "^7.0.0",
-    "npm-run-all": "^4.1.0"
+    "typescript": "~5.8.3",
+    "webpack-bundle-analyzer": "^4.9.0"
   },
   "lint-staged": {
     "*.{ts,html}": [

@@ -1,27 +1,28 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, of, catchError, map, tap, finalize } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, tap, catchError } from 'rxjs/operators';
 import { Card } from '../model/card';
-import { ICard, GameDifficulty, ILoadCardsResponse, IBestScores } from '../types/game.types';
+import { IBestScores, GameDifficulty, ICard } from '../types/game.types';
 import { NotificationService } from './notification.service';
 import { ConfigService } from './config.service';
 import { ErrorHandlerService, ErrorCode } from './error-handler.service';
 import { GameStateManagerService } from './game-state-manager.service';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class GameLogicService implements OnDestroy {
   private allCards: Card[] = [];
   private isCardsLoaded = false;
   private loadingPromise: Promise<Card[]> | null = null;
 
-  constructor(
-    private http: HttpClient,
-    private notificationService: NotificationService,
-    private configService: ConfigService,
-    private errorHandler: ErrorHandlerService,
-    private gameStateManager: GameStateManagerService
+  public constructor(
+    private readonly http: HttpClient,
+    private readonly notificationService: NotificationService,
+    private readonly configService: ConfigService,
+    private readonly errorHandler: ErrorHandlerService,
+    private readonly gameStateManager: GameStateManagerService
   ) {
     this.preloadCards();
   }
@@ -30,9 +31,7 @@ export class GameLogicService implements OnDestroy {
    * Preloads card data on service initialization
    */
   private preloadCards(): void {
-    if (!this.loadingPromise) {
-      this.loadingPromise = this.loadCards().toPromise();
-    }
+    this.loadingPromise ??= this.loadCards().toPromise();
   }
 
   /**
@@ -44,7 +43,7 @@ export class GameLogicService implements OnDestroy {
     }
 
     const endpoint = this.configService.getApiConfig().cardsEndpoint;
-    
+
     return this.errorHandler.handleHttpError(
       this.http.get<ICard[]>(endpoint).pipe(
         map(cardData => cardData.map(data => new Card(data))),
@@ -70,7 +69,7 @@ export class GameLogicService implements OnDestroy {
    * Initializes a new game with proper validation and error handling
    */
   public async newGame(
-    deckSize: number, 
+    deckSize: number,
     difficulty: GameDifficulty = GameDifficulty.EASY
   ): Promise<void> {
     try {
@@ -82,16 +81,18 @@ export class GameLogicService implements OnDestroy {
       }
 
       // Validate deck size
-      if (!this.configService.isValidDeckSize(deckSize)) {
+      if (this.configService.isValidDeckSize(deckSize) !== true) {
+        const config = this.configService.getGameConfig();
         this.notificationService.showError(
-          `Invalid deck size: ${deckSize}. Please select a size between ${this.configService.getGameConfig().minDeckSize} and ${this.configService.getGameConfig().maxDeckSize}.`,
+          `Invalid deck size: ${deckSize}. ` +
+          `Please select a size between ${config.minDeckSize} and ${config.maxDeckSize}.`,
           'Invalid Configuration'
         );
         return;
       }
 
       // Validate card availability
-      if (deckSize / 2 > this.allCards.length) {
+      if ((deckSize / 2) > this.allCards.length) {
         this.notificationService.showError(
           `Not enough card types available for deck size ${deckSize}. Maximum available: ${this.allCards.length * 2}`,
           'Insufficient Cards'
@@ -104,10 +105,10 @@ export class GameLogicService implements OnDestroy {
 
       // Create game cards
       const gameCards = this.createGameCards(deckSize);
-      
+
       // Start the game
       this.gameStateManager.startGame(gameCards);
-      
+
       this.notificationService.showInfo(
         `New ${difficulty} game started with ${deckSize} cards`,
         'Game Started'
@@ -129,9 +130,9 @@ export class GameLogicService implements OnDestroy {
     const pairsNeeded = deckSize / 2;
     const selectedBaseCards = this.selectRandomCards(this.allCards, pairsNeeded);
     const backColor = this.generateRandomColor();
-    
+
     const gameCards: Card[] = [];
-    
+
     // Create pairs of cards
     selectedBaseCards.forEach(baseCard => {
       // First card of the pair
@@ -139,7 +140,7 @@ export class GameLogicService implements OnDestroy {
         ...baseCard,
         backColor
       }));
-      
+
       // Second card of the pair (with different ID)
       gameCards.push(new Card({
         ...baseCard,
@@ -147,7 +148,7 @@ export class GameLogicService implements OnDestroy {
         backColor
       }));
     });
-    
+
     return gameCards;
   }
 
@@ -208,14 +209,14 @@ export class GameLogicService implements OnDestroy {
    * Validates if a deck size is possible with current cards
    */
   public canCreateDeck(deckSize: number): boolean {
-    return this.configService.isValidDeckSize(deckSize) && 
+    return this.configService.isValidDeckSize(deckSize) === true &&
            (deckSize / 2) <= this.allCards.length;
   }
 
   /**
    * Gets game statistics and progress
    */
-  public getGameStats() {
+  public getGameStats(): object {
     return {
       currentStats: this.gameStateManager.currentStats,
       gameProgress: this.gameStateManager.gameProgress,
@@ -227,7 +228,7 @@ export class GameLogicService implements OnDestroy {
   /**
    * Gets current game state for UI binding
    */
-  public getGameState() {
+  public getGameState(): object {
     return {
       cards: this.gameStateManager.cards,
       gameState: this.gameStateManager.gameState,
@@ -240,7 +241,7 @@ export class GameLogicService implements OnDestroy {
   /**
    * Subscribes to game events
    */
-  public getGameEvents() {
+  public getGameEvents(): object {
     return {
       gameWon$: this.gameStateManager.gameWon$,
       cardFlipped$: this.gameStateManager.cardFlipped$,
@@ -255,7 +256,7 @@ export class GameLogicService implements OnDestroy {
   private generateRandomColor(): string {
     const hue = Math.floor(Math.random() * 360);
     const saturation = 60 + Math.floor(Math.random() * 40); // 60-100%
-    const lightness = 45 + Math.floor(Math.random() * 20);  // 45-65%
+    const lightness = 45 + Math.floor(Math.random() * 20); // 45-65%
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
@@ -265,3 +266,4 @@ export class GameLogicService implements OnDestroy {
   public ngOnDestroy(): void {
     this.gameStateManager.destroy();
   }
+}

@@ -11,14 +11,14 @@ describe('AppComponent', () => {
         RouterTestingModule,
         AppComponent,
         NoopAnimationsModule // To handle animations from ngx-bootstrap
-      ],
+      ]
     }).compileComponents();
   });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    void expect(app).toBeTruthy();
   });
 
 });

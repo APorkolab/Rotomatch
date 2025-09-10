@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { Card } from 'src/app/model/card';
 import { Subscription, Observable } from 'rxjs';
 import { GameStateService } from 'src/app/service/game-state.service';
@@ -8,44 +8,45 @@ import { TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'app-game',
-    templateUrl: './game.component.html',
-    styleUrls: ['./game.component.scss'],
-    standalone: true,
-    imports: [CommonModule]
+  selector: 'app-game',
+  templateUrl: './game.component.html',
+  styleUrls: ['./game.component.scss'],
+  standalone: true,
+  imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit, OnDestroy {
-  deckSize = 0;
-  private subscriptions = new Subscription();
-  modalRef?: BsModalRef;
+  public deckSize = 0;
+  private readonly subscriptions = new Subscription();
+  public modalRef?: BsModalRef;
 
-  cardList$: Observable<Card[]>;
-  score$: Observable<number>;
-  isProcessing$: Observable<boolean>;
-  bestResults: { [key: number]: number } = {};
+  public cardList$: Observable<Card[]>;
+  public score$: Observable<number>;
+  public isProcessing$: Observable<boolean>;
+  public bestResults: { [key: number]: number } = {};
 
-  constructor(
-    private data: GameStateService,
+  public constructor(
+    private readonly data: GameStateService,
     public gameLogic: GameLogicService,
-    private modalService: BsModalService
+    private readonly modalService: BsModalService
   ) {
     this.cardList$ = this.gameLogic.cardList$;
     this.score$ = this.gameLogic.score$;
     this.isProcessing$ = this.gameLogic.isProcessing$;
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const deckSizeSub = this.data.currentSelectedDeckSize.subscribe(deckSize => {
       if (deckSize > 0) {
         this.deckSize = deckSize;
-        this.restartGame();
+        void this.restartGame();
       }
     });
     this.subscriptions.add(deckSizeSub);
 
     const newGameSub = this.data.currentNewGameWanted.subscribe(isANewGameWanted => {
       if (isANewGameWanted) {
-        this.restartGame();
+        void this.restartGame();
       }
     });
     this.subscriptions.add(newGameSub);
@@ -58,11 +59,11 @@ export class GameComponent implements OnInit, OnDestroy {
     this.loadBestScore();
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
-  openModal(template: TemplateRef<any>) {
+  public openModal(template: TemplateRef<object>): void {
     this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
   }
 
@@ -70,23 +71,27 @@ export class GameComponent implements OnInit, OnDestroy {
     this.bestResults = this.gameLogic.loadBestResults();
   }
 
-  getBestScoreForCurrentDeck(): number {
+  public getBestScoreForCurrentDeck(): number {
     return this.bestResults[this.deckSize] || 0;
   }
 
-  restartGame(): void {
+  public restartGame(): void {
     this.modalRef?.hide();
     if (this.deckSize > 0) {
-      this.gameLogic.newGame(this.deckSize);
+      void this.gameLogic.newGame(this.deckSize);
       this.loadBestScore();
     }
   }
 
-  revealCard(card: Card): void {
+  public revealCard(card: Card): void {
     this.gameLogic.revealCard(card);
   }
 
-  trackByCardId(index: number, card: Card): number | string {
+  public trackByCardId(index: number, card: Card): number | string {
     return card.id;
+  }
+
+  public trackByIndex(index: number): number {
+    return index;
   }
 }
