@@ -35,8 +35,8 @@
       <div class="difficulty-grid">
         <div
           class="difficulty-card"
-          [class.selected]="selectedDifficulty === 'easy'"
-          (click)="selectDifficulty('easy')"
+          [class.selected]="selectedDifficulty === GameDifficulty.EASY"
+          (click)="selectDifficulty(GameDifficulty.EASY)"
         >
           <div class="difficulty-icon easy-icon">
             <i class="fas fa-leaf"></i>
@@ -47,8 +47,8 @@
 
         <div
           class="difficulty-card"
-          [class.selected]="selectedDifficulty === 'medium'"
-          (click)="selectDifficulty('medium')"
+          [class.selected]="selectedDifficulty === GameDifficulty.MEDIUM"
+          (click)="selectDifficulty(GameDifficulty.MEDIUM)"
         >
           <div class="difficulty-icon medium-icon">
             <i class="fas fa-clock"></i>
@@ -59,8 +59,8 @@
 
         <div
           class="difficulty-card"
-          [class.selected]="selectedDifficulty === 'hard'"
-          (click)="selectDifficulty('hard')"
+          [class.selected]="selectedDifficulty === GameDifficulty.HARD"
+          (click)="selectDifficulty(GameDifficulty.HARD)"
         >
           <div class="difficulty-icon hard-icon">
             <i class="fas fa-fire"></i>

@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: write  # Required for creating releases and uploading artifacts
+  actions: read
+  security-events: write
+  pull-requests: write
+  issues: write
+  deployments: write
+
 env:
   NODE_VERSION: '20.x'
 

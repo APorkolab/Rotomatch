@@ -19,6 +19,7 @@ import { NotificationService } from '../../service/notification.service';
 export class HomeComponent implements OnInit, OnDestroy {
   // Game configuration
   public readonly deckSizes = DECK_SIZE_OPTIONS;
+  public readonly GameDifficulty = GameDifficulty; // Make enum available in template
   public selectedDeckSize: number | null = null;
   public selectedDifficulty: GameDifficulty | null = null;
 
