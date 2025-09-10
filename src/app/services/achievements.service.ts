@@ -52,7 +52,7 @@ export enum AchievementCategory {
   SPEED = 'speed',
   PERSISTENCE = 'persistence',
   MASTERY = 'mastery',
-  SPECIAL = 'special',
+  SPECIAL = 'special'
 }
 
 @Injectable({
@@ -264,9 +264,9 @@ export class AchievementsService {
       bestTimes:
         gameTime > 0
           ? {
-            ...currentStats.bestTimes,
-            [gameStats.deckSize]: Math.min(currentStats.bestTimes[gameStats.deckSize] || Infinity, gameTime)
-          }
+              ...currentStats.bestTimes,
+              [gameStats.deckSize]: Math.min(currentStats.bestTimes[gameStats.deckSize] || Infinity, gameTime)
+            }
           : currentStats.bestTimes,
 
       // Update difficulty stats

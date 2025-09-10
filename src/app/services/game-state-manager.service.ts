@@ -509,7 +509,7 @@ export class GameStateManagerService {
     );
 
     try {
-      const bestScores: IBestScores = (currentBest != null && currentBest.length > 0) ? JSON.parse(currentBest) : {};
+      const bestScores: IBestScores = currentBest != null && currentBest.length > 0 ? JSON.parse(currentBest) : {};
       const deckSize = stats.deckSize;
       const currentAttempts = stats.attempts;
       const gameTime =
@@ -547,7 +547,7 @@ export class GameStateManagerService {
     );
 
     try {
-      return (savedScores != null && savedScores.length > 0) ? JSON.parse(savedScores) : {};
+      return savedScores != null && savedScores.length > 0 ? JSON.parse(savedScores) : {};
     } catch {
       return {};
     }

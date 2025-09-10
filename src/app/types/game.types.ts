@@ -4,20 +4,20 @@ export enum GameState {
   PLAYING = 'playing',
   PAUSED = 'paused',
   WON = 'won',
-  LOADING = 'loading',
+  LOADING = 'loading'
 }
 
 export enum GameDifficulty {
   EASY = 'easy',
   MEDIUM = 'medium',
-  HARD = 'hard',
+  HARD = 'hard'
 }
 
 export enum CardState {
   FACE_DOWN = 'face_down',
   FACE_UP = 'face_up',
   MATCHED = 'matched',
-  ANIMATING = 'animating',
+  ANIMATING = 'animating'
 }
 
 // Core interfaces
