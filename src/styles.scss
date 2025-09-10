@@ -13,7 +13,9 @@ img {
 }
 
 /* Ensure consistent sizing for dynamic content */
-.card, .btn, .modal {
+.card,
+.btn,
+.modal {
   contain: layout;
 }
 
