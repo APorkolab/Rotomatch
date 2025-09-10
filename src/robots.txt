@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to index the site
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
+Disallow: /coverage/
+
+# Sitemap location (when available)
+# Sitemap: https://rotomatch.porkolab.hu/sitemap.xml
