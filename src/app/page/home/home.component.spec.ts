@@ -7,18 +7,19 @@ describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
   let gameStateService: jasmine.SpyObj<GameStateService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    const gameStateSpy = jasmine.createSpyObj('GameStateService', ['selectDeckSize', 'convertStringToNumber']);
+    const gameStateSpy = jasmine.createSpyObj('GameStateService', ['selectDeckSize']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [ HomeComponent ],
+      imports: [HomeComponent],
       providers: [
         { provide: GameStateService, useValue: gameStateSpy },
         { provide: Router, useValue: routerSpy }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     gameStateService = TestBed.inject(GameStateService) as jasmine.SpyObj<GameStateService>;
   });
@@ -33,12 +34,9 @@ describe('HomeComponent', () => {
     void expect(component).toBeTruthy();
   });
 
-  it('should call selectDeckSize on the service when Select is called', () => {
-    const value = '12';
-    component.Select(value);
-    void expect(gameStateService.convertStringToNumber).toHaveBeenCalledWith(value);
-    // We can't easily test the result of the above call without more complex mocking,
-    // but we can check that selectDeckSize was called.
-    void expect(gameStateService.selectDeckSize).toHaveBeenCalled();
+  it('should call selectDeckSize on the service when selectDeckSize is called', () => {
+    const value = 12;
+    component.selectDeckSize(value);
+    void expect(gameStateService.selectDeckSize).toHaveBeenCalledWith(value);
   });
 });

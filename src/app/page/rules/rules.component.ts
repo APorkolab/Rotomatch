@@ -8,9 +8,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RulesComponent {
-
-  public constructor() { }
+  public constructor() {}
 
   // ngOnInit removed as it was empty
-
 }

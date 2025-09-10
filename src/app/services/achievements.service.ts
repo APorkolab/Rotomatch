@@ -1,6 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { GameDifficulty, IGameStats } from '../types/game.types';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../service/notification.service';
 import { ErrorHandlerService } from './error-handler.service';
 import { ConfigService } from './config.service';
 
@@ -52,7 +52,7 @@ export enum AchievementCategory {
   SPEED = 'speed',
   PERSISTENCE = 'persistence',
   MASTERY = 'mastery',
-  SPECIAL = 'special'
+  SPECIAL = 'special',
 }
 
 @Injectable({
@@ -68,9 +68,7 @@ export class AchievementsService {
   // Computed achievement progress
   public readonly totalAchievements = computed(() => this.achievements.length);
   public readonly unlockedCount = computed(() => this._unlockedAchievements().length);
-  public readonly achievementProgress = computed(() =>
-    (this.unlockedCount() / this.totalAchievements()) * 100
-  );
+  public readonly achievementProgress = computed(() => (this.unlockedCount() / this.totalAchievements()) * 100);
 
   public readonly totalAchievementPoints = computed(() =>
     this._unlockedAchievements().reduce((sum, achievement) => sum + achievement.points, 0)
@@ -84,7 +82,7 @@ export class AchievementsService {
       name: 'First Steps',
       description: 'Complete your first game',
       icon: '🎮',
-      condition: (stats) => stats.totalGamesWon >= 1,
+      condition: stats => stats.totalGamesWon >= 1,
       points: 10,
       category: AchievementCategory.BEGINNER
     },
@@ -93,7 +91,7 @@ export class AchievementsService {
       name: 'Flawless Victory',
       description: 'Win a game in minimum attempts',
       icon: '⭐',
-      condition: (stats) => stats.perfectGames >= 1,
+      condition: stats => stats.perfectGames >= 1,
       points: 25,
       category: AchievementCategory.SKILL
     },
@@ -102,7 +100,7 @@ export class AchievementsService {
       name: 'On Fire',
       description: 'Win 5 games in a row',
       icon: '🔥',
-      condition: (stats) => stats.streaks.longestWinStreak >= 5,
+      condition: stats => stats.streaks.longestWinStreak >= 5,
       points: 50,
       category: AchievementCategory.SKILL
     },
@@ -114,8 +112,7 @@ export class AchievementsService {
       description: 'Win 10 games with 6 cards or fewer',
       icon: '🃏',
       condition: (stats): boolean => {
-        return [2, 4, 6].reduce((sum, size) =>
-          sum + (stats.deckSizeStats[size]?.gamesWon || 0), 0) >= 10;
+        return [2, 4, 6].reduce((sum, size) => sum + (stats.deckSizeStats[size]?.gamesWon || 0), 0) >= 10;
       },
       points: 30,
       category: AchievementCategory.SKILL
@@ -126,8 +123,7 @@ export class AchievementsService {
       description: 'Win 10 games with 16 cards or more',
       icon: '👑',
       condition: (stats): boolean => {
-        return [16, 18, 20].reduce((sum, size) =>
-          sum + (stats.deckSizeStats[size]?.gamesWon || 0), 0) >= 10;
+        return [16, 18, 20].reduce((sum, size) => sum + (stats.deckSizeStats[size]?.gamesWon || 0), 0) >= 10;
       },
       points: 50,
       category: AchievementCategory.SKILL
@@ -138,8 +134,7 @@ export class AchievementsService {
       description: 'Win at least 5 games on each difficulty',
       icon: '🎯',
       condition: (stats): boolean => {
-        return Object.values(GameDifficulty).every(diff =>
-          stats.difficultyStats[diff].gamesWon >= 5);
+        return Object.values(GameDifficulty).every(diff => stats.difficultyStats[diff].gamesWon >= 5);
       },
       points: 100,
       category: AchievementCategory.MASTERY
@@ -151,7 +146,7 @@ export class AchievementsService {
       name: 'Speed Demon',
       description: 'Complete a game in under 30 seconds',
       icon: '⚡',
-      condition: (stats) => Object.values(stats.bestTimes).some(time => time < 30000),
+      condition: stats => Object.values(stats.bestTimes).some(time => time < 30000),
       points: 75,
       category: AchievementCategory.SPEED
     },
@@ -160,7 +155,7 @@ export class AchievementsService {
       name: 'Lightning Fast',
       description: 'Complete a 20-card game in under 2 minutes',
       icon: '⚡⚡',
-      condition: (stats) => (stats.bestTimes[20] || Infinity) < 120000,
+      condition: stats => (stats.bestTimes[20] || Infinity) < 120000,
       points: 100,
       category: AchievementCategory.SPEED
     },
@@ -171,7 +166,7 @@ export class AchievementsService {
       name: 'Persistent Player',
       description: 'Play 50 games',
       icon: '💪',
-      condition: (stats) => stats.totalGamesPlayed >= 50,
+      condition: stats => stats.totalGamesPlayed >= 50,
       points: 40,
       category: AchievementCategory.PERSISTENCE
     },
@@ -180,7 +175,7 @@ export class AchievementsService {
       name: 'Dedicated Gamer',
       description: 'Play for more than 2 hours total',
       icon: '⏰',
-      condition: (stats) => stats.timeStats.totalPlayTime >= 7200000, // 2 hours in ms
+      condition: stats => stats.timeStats.totalPlayTime >= 7200000, // 2 hours in ms
       points: 60,
       category: AchievementCategory.PERSISTENCE
     },
@@ -189,7 +184,7 @@ export class AchievementsService {
       name: 'Century Club',
       description: 'Win 100 games',
       icon: '💯',
-      condition: (stats) => stats.totalGamesWon >= 100,
+      condition: stats => stats.totalGamesWon >= 100,
       points: 200,
       category: AchievementCategory.MASTERY
     },
@@ -213,9 +208,9 @@ export class AchievementsService {
       description: 'Get perfect scores on 3 different deck sizes',
       icon: '🏆',
       condition: (stats): boolean => {
-        const perfectSizes = Object.entries(stats.bestAttempts)
-          .filter(([size, attempts]) => attempts === parseInt(size) / 2)
-          .length;
+        const perfectSizes = Object.entries(stats.bestAttempts).filter(
+          ([size, attempts]) => attempts === parseInt(size) / 2
+        ).length;
         return perfectSizes >= 3;
       },
       points: 150,
@@ -236,8 +231,10 @@ export class AchievementsService {
    */
   public updateGameStats(gameStats: IGameStats): void {
     const currentStats = this._gameStats();
-    const gameTime = (gameStats.endTime != null && gameStats.startTime != null) ?
-      gameStats.endTime.getTime() - gameStats.startTime.getTime() : 0;
+    const gameTime =
+      gameStats.endTime != null && gameStats.startTime != null
+        ? gameStats.endTime.getTime() - gameStats.startTime.getTime()
+        : 0;
 
     const isPerfectGame = gameStats.attempts === gameStats.deckSize / 2;
     const isWin = gameStats.completionPercentage === 100;
@@ -252,37 +249,34 @@ export class AchievementsService {
       // Update streaks
       streaks: {
         currentWinStreak: isWin ? currentStats.streaks.currentWinStreak + 1 : 0,
-        longestWinStreak: isWin ?
-          Math.max(currentStats.streaks.longestWinStreak, currentStats.streaks.currentWinStreak + 1) :
-          currentStats.streaks.longestWinStreak
+        longestWinStreak: isWin
+          ? Math.max(currentStats.streaks.longestWinStreak, currentStats.streaks.currentWinStreak + 1)
+          : currentStats.streaks.longestWinStreak
       },
 
       // Update best attempts
       bestAttempts: {
         ...currentStats.bestAttempts,
-        [gameStats.deckSize]: Math.min(
-          currentStats.bestAttempts[gameStats.deckSize] || Infinity,
-          gameStats.attempts
-        )
+        [gameStats.deckSize]: Math.min(currentStats.bestAttempts[gameStats.deckSize] || Infinity, gameStats.attempts)
       },
 
       // Update best times
-      bestTimes: gameTime > 0 ? {
-        ...currentStats.bestTimes,
-        [gameStats.deckSize]: Math.min(
-          currentStats.bestTimes[gameStats.deckSize] || Infinity,
-          gameTime
-        )
-      } : currentStats.bestTimes,
+      bestTimes:
+        gameTime > 0
+          ? {
+            ...currentStats.bestTimes,
+            [gameStats.deckSize]: Math.min(currentStats.bestTimes[gameStats.deckSize] || Infinity, gameTime)
+          }
+          : currentStats.bestTimes,
 
       // Update difficulty stats
       difficultyStats: {
         ...currentStats.difficultyStats,
         [gameStats.difficulty]: {
           gamesPlayed: currentStats.difficultyStats[gameStats.difficulty].gamesPlayed + 1,
-          gamesWon: isWin ?
-            currentStats.difficultyStats[gameStats.difficulty].gamesWon + 1 :
-            currentStats.difficultyStats[gameStats.difficulty].gamesWon,
+          gamesWon: isWin
+            ? currentStats.difficultyStats[gameStats.difficulty].gamesWon + 1
+            : currentStats.difficultyStats[gameStats.difficulty].gamesWon,
           averageAttempts: this.calculateNewAverage(
             currentStats.difficultyStats[gameStats.difficulty].averageAttempts,
             currentStats.difficultyStats[gameStats.difficulty].gamesPlayed,
@@ -306,9 +300,9 @@ export class AchievementsService {
         ...currentStats.deckSizeStats,
         [gameStats.deckSize]: {
           gamesPlayed: (currentStats.deckSizeStats[gameStats.deckSize]?.gamesPlayed || 0) + 1,
-          gamesWon: isWin ?
-            (currentStats.deckSizeStats[gameStats.deckSize]?.gamesWon || 0) + 1 :
-            (currentStats.deckSizeStats[gameStats.deckSize]?.gamesWon || 0),
+          gamesWon: isWin
+            ? (currentStats.deckSizeStats[gameStats.deckSize]?.gamesWon || 0) + 1
+            : currentStats.deckSizeStats[gameStats.deckSize]?.gamesWon || 0,
           averageAttempts: this.calculateNewAverage(
             currentStats.deckSizeStats[gameStats.deckSize]?.averageAttempts || 0,
             currentStats.deckSizeStats[gameStats.deckSize]?.gamesPlayed || 0,
@@ -330,15 +324,18 @@ export class AchievementsService {
     const currentUnlocked = this._unlockedAchievements();
     const currentUnlockedIds = new Set(currentUnlocked.map(a => a.id));
 
-    const newAchievements = this.achievements.filter(achievement =>
-      !currentUnlockedIds.has(achievement.id) && achievement.condition(stats)
+    const newAchievements = this.achievements.filter(
+      achievement => !currentUnlockedIds.has(achievement.id) && achievement.condition(stats)
     );
 
     if (newAchievements.length > 0) {
-      const updatedUnlocked = [...currentUnlocked, ...newAchievements.map(a => ({
-        ...a,
-        unlockedAt: new Date()
-      }))];
+      const updatedUnlocked = [
+        ...currentUnlocked,
+        ...newAchievements.map(a => ({
+          ...a,
+          unlockedAt: new Date()
+        }))
+      ];
 
       this._unlockedAchievements.set(updatedUnlocked);
       this.saveUnlockedAchievements();
@@ -407,10 +404,7 @@ export class AchievementsService {
     this.saveStats();
     this.saveUnlockedAchievements();
 
-    this.notificationService.showInfo(
-      'All statistics and achievements have been reset.',
-      'Statistics Reset'
-    );
+    this.notificationService.showInfo('All statistics and achievements have been reset.', 'Statistics Reset');
   }
 
   /**
@@ -418,7 +412,7 @@ export class AchievementsService {
    */
   private calculateNewAverage(currentAvg: number, count: number, newValue: number): number {
     if (count === 0) return newValue;
-    return ((currentAvg * count) + newValue) / (count + 1);
+    return (currentAvg * count + newValue) / (count + 1);
   }
 
   /**

@@ -13,8 +13,8 @@ describe('GameLogicService', () => {
   let gameStateService: jasmine.SpyObj<GameStateService>;
 
   const mockCards: Card[] = [
-    { id: 1, name: 'A', icon: '', flipped: false, matched: false },
-    { id: 2, name: 'B', icon: '', flipped: false, matched: false }
+    new Card({ id: 1, name: 'A', icon: '', flipped: false, matched: false }),
+    new Card({ id: 2, name: 'B', icon: '', flipped: false, matched: false })
   ];
 
   beforeEach(() => {
@@ -66,7 +66,7 @@ describe('GameLogicService', () => {
   it('should reveal a card and flip it', () => {
     void service.newGame(2);
     let firstCard: Card;
-    void service.cardList$.subscribe(cards => firstCard = cards[0]);
+    void service.cardList$.subscribe(cards => (firstCard = cards[0]));
 
     void service.revealCard(firstCard!);
 
@@ -75,32 +75,34 @@ describe('GameLogicService', () => {
     });
   });
 
-  it('should find a match when two identical cards are revealed', (done) => {
+  it('should find a match when two identical cards are revealed', done => {
     void service.newGame(2); // This will create cards with name 'A' and 'A'
 
     let card1: Card, card2: Card;
-    void service.cardList$.subscribe(cards => {
-      [card1, card2] = cards;
-    }).unsubscribe();
+    void service.cardList$
+      .subscribe(cards => {
+        [card1, card2] = cards;
+      })
+      .unsubscribe();
 
     void service.revealCard(card1!);
     void service.revealCard(card2!);
 
     void service.cardList$.subscribe(cards => {
-      if(cards.length > 0 && cards.every((c: Card) => c.matched === true) === true) {
+      if (cards.length > 0 && cards.every((c: Card) => c.matched === true) === true) {
         void expect(cards.every((c: Card) => c.matched === true)).toBeTrue();
         done();
       }
     });
   });
 
-  it('should flip cards back when they do not match', (done) => {
+  it('should flip cards back when they do not match', done => {
     // To test non-match, we need to load different cards
     const differentCards: Card[] = [
-      { id: 1, name: 'A', icon: '', flipped: false, matched: false },
-      { id: 2, name: 'B', icon: '', flipped: false, matched: false },
-      { id: 3, name: 'C', icon: '', flipped: false, matched: false },
-      { id: 4, name: 'D', icon: '', flipped: false, matched: false }
+      new Card({ id: 1, name: 'A', icon: '', flipped: false, matched: false }),
+      new Card({ id: 2, name: 'B', icon: '', flipped: false, matched: false }),
+      new Card({ id: 3, name: 'C', icon: '', flipped: false, matched: false }),
+      new Card({ id: 4, name: 'D', icon: '', flipped: false, matched: false })
     ];
     const req = httpMock.expectOne('assets/data/cards.json');
     req.flush(differentCards);
@@ -108,16 +110,19 @@ describe('GameLogicService', () => {
     void service.newGame(4);
 
     let card1: Card, card2: Card;
-    void service.cardList$.subscribe(cards => {
-      [card1, card2] = cards;
-    }).unsubscribe();
+    void service.cardList$
+      .subscribe(cards => {
+        [card1, card2] = cards;
+      })
+      .unsubscribe();
 
     void service.revealCard(card1!);
     void service.revealCard(card2!); // Reveal two different cards
 
     // isProcessing becomes true, then false after timeout
     void service.isProcessing$.subscribe(isProcessing => {
-      if (isProcessing === false && notificationService.showSuccess.calls.count() === 0) { // wait for flip back animation
+      if (isProcessing === false && notificationService.showSuccess.calls.count() === 0) {
+        // wait for flip back animation
         void service.cardList$.subscribe(cards => {
           void expect(cards.every((c: Card) => c.flipped === false)).toBeTrue();
           done();
@@ -125,5 +130,4 @@ describe('GameLogicService', () => {
       }
     });
   });
-
 });

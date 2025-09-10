@@ -65,10 +65,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   public selectDeckSize(size: number): void {
     this.selectedDeckSize = size;
-    this.notificationService.showInfo(
-      `${size} cards (${size / 2} pairs) selected`,
-      'Game Settings'
-    );
+    this.notificationService.showInfo(`${size} cards (${size / 2} pairs) selected`, 'Game Settings');
   }
 
   /**
@@ -85,10 +82,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   public async startGame(): Promise<void> {
     if (this.selectedDeckSize == null || this.selectedDifficulty == null) {
-      this.notificationService.showWarning(
-        'Please select both deck size and difficulty level',
-        'Missing Settings'
-      );
+      this.notificationService.showWarning('Please select both deck size and difficulty level', 'Missing Settings');
       return;
     }
 
@@ -96,10 +90,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       await this.gameLogic.newGame(this.selectedDeckSize, this.selectedDifficulty);
       void this.router.navigate(['/game']);
     } catch {
-      this.notificationService.showError(
-        'Failed to start game. Please try again.',
-        'Game Error'
-      );
+      this.notificationService.showError('Failed to start game. Please try again.', 'Game Error');
     }
   }
 
@@ -111,10 +102,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       void this.router.navigate(['/game']);
       this.notificationService.showInfo('Resumed saved game', 'Game Restored');
     } else {
-      this.notificationService.showWarning(
-        'No saved game found',
-        'Cannot Resume'
-      );
+      this.notificationService.showWarning('No saved game found', 'Cannot Resume');
     }
   }
 
@@ -122,11 +110,11 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Loads user statistics for display
    */
   private loadUserStatistics(): void {
-    const stats = this.achievementsService.getDetailedStats();
+    const stats = this.achievementsService.getDetailedStats() as { overview?: { totalGames?: number; totalWins?: number; winRate?: number } };
 
-    this.hasGameHistory = stats.overview.totalGames > 0;
-    this.totalWins = stats.overview.totalWins;
-    this.winRate = Math.round(stats.overview.winRate);
+    this.hasGameHistory = (stats?.overview?.totalGames ?? 0) > 0;
+    this.totalWins = stats?.overview?.totalWins ?? 0;
+    this.winRate = Math.round(stats?.overview?.winRate ?? 0);
     this.achievementCount = this.achievementsService.unlockedCount();
   }
 

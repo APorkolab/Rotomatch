@@ -64,7 +64,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   public openModal(template: TemplateRef<object>): void {
-    this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
+    this.modalRef = this.modalService.show(template, { class: 'modal-sm' });
   }
 
   private loadBestScore(): void {

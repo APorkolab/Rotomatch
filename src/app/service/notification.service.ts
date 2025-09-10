@@ -16,26 +16,17 @@ export class NotificationService {
   private readonly defaultConfig: Partial<IndividualConfig> = {
     timeOut: 5000,
     closeButton: true,
-    progressBar: true,
-    preventDuplicates: true
+    progressBar: true
   };
 
   public constructor(private readonly toastr: ToastrService) {}
 
-  public showSuccess(
-    message: string,
-    title: string = 'Success',
-    config?: NotificationConfig
-  ): void {
+  public showSuccess(message: string, title: string = 'Success', config?: NotificationConfig): void {
     const options = this.buildConfig(config);
     this.toastr.success(message, title, options);
   }
 
-  public showError(
-    message: string,
-    title: string = 'Error',
-    config?: NotificationConfig
-  ): void {
+  public showError(message: string, title: string = 'Error', config?: NotificationConfig): void {
     const options = this.buildConfig({
       timeout: 8000,
       ...config
@@ -43,20 +34,12 @@ export class NotificationService {
     this.toastr.error(message, title, options);
   }
 
-  public showInfo(
-    message: string,
-    title: string = 'Info',
-    config?: NotificationConfig
-  ): void {
+  public showInfo(message: string, title: string = 'Info', config?: NotificationConfig): void {
     const options = this.buildConfig(config);
     this.toastr.info(message, title, options);
   }
 
-  public showWarning(
-    message: string,
-    title: string = 'Warning',
-    config?: NotificationConfig
-  ): void {
+  public showWarning(message: string, title: string = 'Warning', config?: NotificationConfig): void {
     const options = this.buildConfig({
       timeout: 7000,
       ...config
@@ -67,10 +50,7 @@ export class NotificationService {
   /**
    * Shows a game-specific achievement notification
    */
-  public showAchievement(
-    message: string,
-    title: string = '🏆 Achievement Unlocked!'
-  ): void {
+  public showAchievement(message: string, title: string = '🏆 Achievement Unlocked!'): void {
     this.toastr.success(message, title, {
       ...this.defaultConfig,
       timeOut: 6000,
@@ -82,28 +62,19 @@ export class NotificationService {
   /**
    * Shows game completion notification
    */
-  public showGameComplete(
-    attempts: number,
-    time?: number,
-    isNewRecord: boolean = false
-  ): void {
-    const timeText = (time != null && time > 0) ? ` in ${this.formatTime(time)}` : '';
+  public showGameComplete(attempts: number, time?: number, isNewRecord: boolean = false): void {
+    const timeText = time != null && time > 0 ? ` in ${this.formatTime(time)}` : '';
     const recordText = isNewRecord ? ' 🎉 New Record!' : '';
 
-    this.showSuccess(
-      `Completed in ${attempts} attempts${timeText}${recordText}`,
-      '🎊 Congratulations!',
-      { timeout: 8000 }
-    );
+    this.showSuccess(`Completed in ${attempts} attempts${timeText}${recordText}`, '🎊 Congratulations!', {
+      timeout: 8000
+    });
   }
 
   /**
    * Shows loading notification
    */
-  public showLoading(
-    message: string = 'Loading...',
-    title: string = '⏳'
-  ): void {
+  public showLoading(message: string = 'Loading...', title: string = '⏳'): void {
     this.showInfo(message, title, {
       timeout: 0, // Don't auto-dismiss
       closeButton: false,
@@ -141,7 +112,6 @@ export class NotificationService {
       timeOut: config?.timeout ?? this.defaultConfig.timeOut,
       closeButton: config?.closeButton ?? this.defaultConfig.closeButton,
       progressBar: config?.progressBar ?? this.defaultConfig.progressBar,
-      preventDuplicates: config?.preventDuplicates ?? this.defaultConfig.preventDuplicates,
       positionClass: config?.positionClass
     };
   }

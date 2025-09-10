@@ -2,16 +2,23 @@
   <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top shadow-sm">
     <div class="container-fluid">
       <a class="navbar-brand" routerLink="/">
-        <img src="assets/images/rotomatch-logo.svg" alt="Rotomatch" width="100">
+        <img src="assets/images/rotomatch-logo.svg" alt="Rotomatch" width="100" />
       </a>
-      <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed"
-        [attr.aria-expanded]="!isCollapsed" aria-controls="navbarCollapse">
+      <button
+        class="navbar-toggler"
+        type="button"
+        (click)="isCollapsed = !isCollapsed"
+        [attr.aria-expanded]="!isCollapsed"
+        aria-controls="navbarCollapse"
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarCollapse" [collapse]="isCollapsed" [isAnimated]="true">
         <ul class="navbar-nav ms-auto mb-2 mb-md-0">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+              >Home</a
+            >
           </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/rules" routerLinkActive="active">Rules</a>

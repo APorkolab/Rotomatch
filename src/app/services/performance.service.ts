@@ -74,7 +74,7 @@ export class PerformanceService {
 
     // Calculate score based on FPS (0-40), load time (0-40), and other factors (0-20)
     const fpsScore = Math.min(40, (fps / 60) * 40);
-    const loadScore = Math.max(0, 40 - (loadTime / 100)); // Penalize slow loads
+    const loadScore = Math.max(0, 40 - loadTime / 100); // Penalize slow loads
 
     return Math.round(fpsScore + loadScore + 20); // Base score of 20
   });
@@ -352,14 +352,10 @@ export class PerformanceService {
     if (typeof PerformanceObserver === 'undefined') return;
 
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
         entries.forEach(entry => {
-          this.recordMetric(
-            `browser_${entry.name}`,
-            entry.duration || entry.startTime,
-            'timing'
-          );
+          this.recordMetric(`browser_${entry.name}`, entry.duration || entry.startTime, 'timing');
         });
       });
 
@@ -379,8 +375,7 @@ export class PerformanceService {
 
       if (!this.configService.isProduction()) {
         console.warn(
-          `⚠️ Performance threshold exceeded: ${name} took ${Math.round(value)}ms ` +
-          `(threshold: ${thresholdValue}ms)`
+          `⚠️ Performance threshold exceeded: ${name} took ${Math.round(value)}ms ` + `(threshold: ${thresholdValue}ms)`
         );
       }
     }

@@ -1,13 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { map, tap, catchError } from 'rxjs/operators';
 import { Card } from '../model/card';
 import { IBestScores, GameDifficulty, ICard } from '../types/game.types';
 import { NotificationService } from './notification.service';
-import { ConfigService } from './config.service';
-import { ErrorHandlerService, ErrorCode } from './error-handler.service';
-import { GameStateManagerService } from './game-state-manager.service';
+import { ConfigService } from '../services/config.service';
+import { ErrorHandlerService, ErrorCode } from '../services/error-handler.service';
+import { GameStateManagerService } from '../services/game-state-manager.service';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,12 @@ export class GameLogicService implements OnDestroy {
    * Preloads card data on service initialization
    */
   private preloadCards(): void {
-    this.loadingPromise ??= this.loadCards().toPromise();
+    this.loadingPromise ??= new Promise((resolve, reject) => {
+      this.loadCards().subscribe({
+        next: cards => resolve(cards),
+        error: err => reject(err)
+      });
+    });
   }
 
   /**
@@ -68,10 +74,7 @@ export class GameLogicService implements OnDestroy {
   /**
    * Initializes a new game with proper validation and error handling
    */
-  public async newGame(
-    deckSize: number,
-    difficulty: GameDifficulty = GameDifficulty.EASY
-  ): Promise<void> {
+  public async newGame(deckSize: number, difficulty: GameDifficulty = GameDifficulty.EASY): Promise<void> {
     try {
       // Ensure cards are loaded
       if (!this.isCardsLoaded) {
@@ -85,14 +88,14 @@ export class GameLogicService implements OnDestroy {
         const config = this.configService.getGameConfig();
         this.notificationService.showError(
           `Invalid deck size: ${deckSize}. ` +
-          `Please select a size between ${config.minDeckSize} and ${config.maxDeckSize}.`,
+            `Please select a size between ${config.minDeckSize} and ${config.maxDeckSize}.`,
           'Invalid Configuration'
         );
         return;
       }
 
       // Validate card availability
-      if ((deckSize / 2) > this.allCards.length) {
+      if (deckSize / 2 > this.allCards.length) {
         this.notificationService.showError(
           `Not enough card types available for deck size ${deckSize}. Maximum available: ${this.allCards.length * 2}`,
           'Insufficient Cards'
@@ -109,11 +112,7 @@ export class GameLogicService implements OnDestroy {
       // Start the game
       this.gameStateManager.startGame(gameCards);
 
-      this.notificationService.showInfo(
-        `New ${difficulty} game started with ${deckSize} cards`,
-        'Game Started'
-      );
-
+      this.notificationService.showInfo(`New ${difficulty} game started with ${deckSize} cards`, 'Game Started');
     } catch (error) {
       this.errorHandler.createError(
         ErrorCode.CONFIGURATION_ERROR,
@@ -136,17 +135,21 @@ export class GameLogicService implements OnDestroy {
     // Create pairs of cards
     selectedBaseCards.forEach(baseCard => {
       // First card of the pair
-      gameCards.push(new Card({
-        ...baseCard,
-        backColor
-      }));
+      gameCards.push(
+        new Card({
+          ...baseCard,
+          backColor
+        })
+      );
 
       // Second card of the pair (with different ID)
-      gameCards.push(new Card({
-        ...baseCard,
-        id: `${baseCard.id}_pair`,
-        backColor
-      }));
+      gameCards.push(
+        new Card({
+          ...baseCard,
+          id: `${baseCard.id}_pair`,
+          backColor
+        })
+      );
     });
 
     return gameCards;
@@ -195,6 +198,34 @@ export class GameLogicService implements OnDestroy {
     this.gameStateManager.resetGame();
   }
 
+  // Observable properties that components expect
+  public readonly cardList$ = toObservable(this.gameStateManager.cards).pipe(
+    map(cards => cards || [])
+  );
+
+  public readonly score$ = toObservable(this.gameStateManager.currentStats).pipe(
+    map(stats => stats?.attempts || 0)
+  );
+
+  public readonly isProcessing$ = toObservable(this.gameStateManager.isProcessing);
+
+  public readonly gameWon$ = this.gameStateManager.gameWon$;
+
+  /**
+   * Loads best results for display
+   */
+  public loadBestResults(): { [key: number]: number } {
+    const bestScores = this.getBestScores();
+    const results: { [key: number]: number } = {};
+
+    Object.keys(bestScores).forEach(key => {
+      const deckSize = parseInt(key, 10);
+      results[deckSize] = bestScores[deckSize]?.attempts ?? 0;
+    });
+
+    return results;
+  }
+
   /**
    * Gets all available cards for preview/selection
    */
@@ -209,8 +240,7 @@ export class GameLogicService implements OnDestroy {
    * Validates if a deck size is possible with current cards
    */
   public canCreateDeck(deckSize: number): boolean {
-    return this.configService.isValidDeckSize(deckSize) === true &&
-           (deckSize / 2) <= this.allCards.length;
+    return this.configService.isValidDeckSize(deckSize) === true && deckSize / 2 <= this.allCards.length;
   }
 
   /**

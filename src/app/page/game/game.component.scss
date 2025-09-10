@@ -1,5 +1,5 @@
 // Import animations and variables
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css");
 
 // Color Variables
 $primary-color: #6366f1;
@@ -19,17 +19,33 @@ $card-border-radius: 12px;
 
 // Animations
 @keyframes cardFlip {
-  0% { transform: rotateY(0deg) scale(1); }
-  50% { transform: rotateY(90deg) scale(1.05); }
-  100% { transform: rotateY(180deg) scale(1); }
+  0% {
+    transform: rotateY(0deg) scale(1);
+  }
+  50% {
+    transform: rotateY(90deg) scale(1.05);
+  }
+  100% {
+    transform: rotateY(180deg) scale(1);
+  }
 }
 
 @keyframes cardMatch {
-  0% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.1) rotate(5deg); }
-  50% { transform: scale(1.2) rotate(-5deg); }
-  75% { transform: scale(1.1) rotate(2deg); }
-  100% { transform: scale(1) rotate(0deg); }
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 @keyframes cardAppear {
@@ -44,8 +60,13 @@ $card-border-radius: 12px;
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes confetti {
@@ -75,7 +96,7 @@ $card-border-radius: 12px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  
+
   @media (min-width: 768px) {
     padding: 1.5rem;
   }
@@ -96,15 +117,15 @@ $card-border-radius: 12px;
   border-radius: 1rem;
   padding: 1rem;
   margin-bottom: 1.5rem;
-  
+
   &.playing {
     border-left: 4px solid $success-color;
   }
-  
+
   &.paused {
     border-left: 4px solid $warning-color;
   }
-  
+
   &.won {
     border-left: 4px solid $primary-color;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
@@ -121,7 +142,7 @@ $card-border-radius: 12px;
   font-size: 1.2rem;
   color: white;
   background: $primary-color;
-  
+
   &.pulse {
     animation: pulse 2s infinite;
   }
@@ -129,18 +150,18 @@ $card-border-radius: 12px;
 
 .status-text {
   flex: 1;
-  
+
   .status-title {
     display: block;
     font-size: 1.1rem;
     font-weight: 600;
     color: $dark-color;
-    
+
     @media (min-width: 768px) {
       font-size: 1.2rem;
     }
   }
-  
+
   .status-subtitle {
     display: block;
     font-size: 0.9rem;
@@ -155,7 +176,7 @@ $card-border-radius: 12px;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
-  
+
   @media (max-width: 480px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
@@ -172,7 +193,7 @@ $card-border-radius: 12px;
   gap: 0.75rem;
   position: relative;
   overflow: hidden;
-  
+
   @media (max-width: 480px) {
     padding: 0.75rem;
     flex-direction: column;
@@ -191,13 +212,13 @@ $card-border-radius: 12px;
   font-size: 1.1rem;
   color: white;
   flex-shrink: 0;
-  
+
   @media (max-width: 480px) {
     width: 2rem;
     height: 2rem;
     font-size: 0.9rem;
   }
-  
+
   &.pulse {
     animation: pulse 1.5s infinite;
   }
@@ -221,7 +242,7 @@ $card-border-radius: 12px;
 
 .stat-content {
   flex: 1;
-  
+
   @media (max-width: 480px) {
     flex: none;
   }
@@ -232,11 +253,11 @@ $card-border-radius: 12px;
   font-weight: 700;
   color: $dark-color;
   line-height: 1;
-  
+
   @media (min-width: 768px) {
     font-size: 1.5rem;
   }
-  
+
   @media (max-width: 480px) {
     font-size: 1.1rem;
   }
@@ -246,7 +267,7 @@ $card-border-radius: 12px;
   font-size: 0.8rem;
   color: #6b7280;
   margin-top: 0.25rem;
-  
+
   @media (min-width: 768px) {
     font-size: 0.9rem;
   }
@@ -275,7 +296,7 @@ $card-border-radius: 12px;
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
-  
+
   @media (min-width: 768px) {
     gap: 1rem;
   }
@@ -295,53 +316,53 @@ $card-border-radius: 12px;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     background: white;
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
   }
-  
+
   &.pause-btn {
     border-color: $warning-color;
     color: $warning-color;
-    
+
     &:hover:not(:disabled) {
       background: $warning-color;
       color: white;
     }
   }
-  
+
   &.restart-btn {
     border-color: $danger-color;
     color: $danger-color;
-    
+
     &:hover:not(:disabled) {
       background: $danger-color;
       color: white;
     }
   }
-  
+
   &.menu-btn {
     border-color: $primary-color;
     color: $primary-color;
-    
+
     &:hover:not(:disabled) {
       background: $primary-color;
       color: white;
     }
   }
-  
+
   i {
     font-size: 1rem;
   }
-  
+
   @media (min-width: 768px) {
     padding: 0.875rem 1.5rem;
     font-size: 1rem;
@@ -355,7 +376,7 @@ $card-border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   @media (min-width: 768px) {
     padding: 2rem;
   }
@@ -365,7 +386,7 @@ $card-border-radius: 12px;
   max-width: 1200px;
   width: 100%;
   position: relative;
-  
+
   &.disabled {
     pointer-events: none;
   }
@@ -378,38 +399,38 @@ $card-border-radius: 12px;
   gap: 0.5rem;
   justify-content: center;
   perspective: 1000px;
-  
+
   @media (min-width: 480px) {
     grid-template-columns: repeat(auto-fill, minmax($card-size-tablet, 1fr));
     gap: 0.75rem;
   }
-  
+
   @media (min-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax($card-size-desktop, 1fr));
     gap: 1rem;
   }
-  
+
   // Dynamic grid based on card count
   &[style*="--cards-count: 4"] {
     grid-template-columns: repeat(2, 1fr);
     max-width: 300px;
     margin: 0 auto;
   }
-  
+
   &[style*="--cards-count: 6"] {
     grid-template-columns: repeat(3, 1fr);
     max-width: 400px;
     margin: 0 auto;
   }
-  
+
   &[style*="--cards-count: 8"] {
     grid-template-columns: repeat(4, 1fr);
-    
+
     @media (max-width: 480px) {
       grid-template-columns: repeat(3, 1fr);
     }
   }
-  
+
   // Larger grids
   &[style*="--cards-count: 12"],
   &[style*="--cards-count: 16"],
@@ -417,15 +438,15 @@ $card-border-radius: 12px;
     @media (max-width: 480px) {
       grid-template-columns: repeat(3, 1fr);
     }
-    
+
     @media (min-width: 481px) and (max-width: 768px) {
       grid-template-columns: repeat(4, 1fr);
     }
-    
+
     @media (min-width: 769px) {
       grid-template-columns: repeat(5, 1fr);
     }
-    
+
     @media (min-width: 1024px) {
       grid-template-columns: repeat(6, 1fr);
     }
@@ -447,49 +468,49 @@ $card-border-radius: 12px;
   transform-style: preserve-3d;
   transition: transform 0.6s ease-in-out;
   cursor: pointer;
-  
+
   @media (min-width: 480px) {
     width: $card-size-tablet;
     height: $card-size-tablet;
   }
-  
+
   @media (min-width: 768px) {
     width: $card-size-desktop;
     height: $card-size-desktop;
   }
-  
+
   &:hover {
     transform: translateY(-2px);
   }
-  
+
   &.flipped {
     transform: rotateY(180deg);
-    
+
     &:hover {
       transform: rotateY(180deg) translateY(-2px);
     }
   }
-  
+
   &.matched {
     animation: cardMatch 0.8s ease-in-out;
-    
+
     .card {
       box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
       border: 2px solid $success-color;
     }
   }
-  
+
   &.processing {
     pointer-events: none;
-    
+
     .card {
       box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
     }
   }
-  
+
   &.clickable:hover {
     transform: translateY(-3px);
-    
+
     .card {
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
@@ -517,7 +538,7 @@ $card-border-radius: 12px;
 .card-back {
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   transform: rotateY(180deg);
-  
+
   .card-content {
     display: flex;
     flex-direction: column;
@@ -527,7 +548,7 @@ $card-border-radius: 12px;
     padding: 0.5rem;
     text-align: center;
   }
-  
+
   .card-image {
     width: 60%;
     height: 60%;
@@ -535,7 +556,7 @@ $card-border-radius: 12px;
     border-radius: 8px;
     margin-bottom: 0.25rem;
   }
-  
+
   .card-name {
     font-size: 0.7rem;
     font-weight: 600;
@@ -544,7 +565,7 @@ $card-border-radius: 12px;
     overflow: hidden;
     white-space: nowrap;
     max-width: 100%;
-    
+
     @media (min-width: 768px) {
       font-size: 0.8rem;
     }
@@ -556,33 +577,51 @@ $card-border-radius: 12px;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   transform: rotateY(0deg);
   position: relative;
-  
+
   .card-pattern {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    
+
     .pattern-circle {
       width: 6px;
       height: 6px;
       background: rgba(255, 255, 255, 0.2);
       border-radius: 50%;
       position: absolute;
-      
-      &:nth-child(1) { top: -15px; left: -8px; }
-      &:nth-child(2) { top: -15px; left: 8px; }
-      &:nth-child(3) { top: 0; left: -15px; }
-      &:nth-child(4) { top: 0; left: 15px; }
-      &:nth-child(5) { top: 15px; left: -8px; }
-      &:nth-child(6) { top: 15px; left: 8px; }
+
+      &:nth-child(1) {
+        top: -15px;
+        left: -8px;
+      }
+      &:nth-child(2) {
+        top: -15px;
+        left: 8px;
+      }
+      &:nth-child(3) {
+        top: 0;
+        left: -15px;
+      }
+      &:nth-child(4) {
+        top: 0;
+        left: 15px;
+      }
+      &:nth-child(5) {
+        top: 15px;
+        left: -8px;
+      }
+      &:nth-child(6) {
+        top: 15px;
+        left: 8px;
+      }
     }
   }
-  
+
   .card-logo {
     color: rgba(255, 255, 255, 0.4);
     font-size: 1.5rem;
-    
+
     @media (min-width: 768px) {
       font-size: 2rem;
     }
@@ -620,7 +659,7 @@ $card-border-radius: 12px;
   font-size: 0.8rem;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
   z-index: 10;
-  
+
   @media (min-width: 768px) {
     width: 30px;
     height: 30px;
@@ -634,7 +673,7 @@ $card-border-radius: 12px;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
-  
+
   .spinner {
     width: 20px;
     height: 20px;
@@ -642,7 +681,7 @@ $card-border-radius: 12px;
     border-radius: 50%;
     border-top-color: white;
     animation: spin 1s ease-in-out infinite;
-    
+
     @media (min-width: 768px) {
       width: 25px;
       height: 25px;
@@ -651,7 +690,9 @@ $card-border-radius: 12px;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // Game Overlays
@@ -667,16 +708,16 @@ $card-border-radius: 12px;
   align-items: center;
   justify-content: center;
   z-index: 100;
-  
+
   .overlay-content {
     text-align: center;
     color: white;
-    
+
     .overlay-icon {
       font-size: 3rem;
       margin-bottom: 1rem;
       color: $primary-color;
-      
+
       .loading-spinner {
         width: 50px;
         height: 50px;
@@ -687,13 +728,13 @@ $card-border-radius: 12px;
         margin: 0 auto;
       }
     }
-    
+
     h3 {
       font-size: 1.5rem;
       font-weight: 600;
       margin: 0 0 0.5rem 0;
     }
-    
+
     p {
       font-size: 1rem;
       margin: 0;
@@ -715,47 +756,47 @@ $card-border-radius: 12px;
   justify-content: center;
   z-index: 1000;
   animation: celebrationSlideIn 0.8s ease-out;
-  
+
   .celebration-content {
     text-align: center;
     color: white;
     max-width: 400px;
     padding: 2rem;
-    
+
     .celebration-icon {
       font-size: 4rem;
       color: #ffd700;
       margin-bottom: 1rem;
       animation: pulse 2s infinite;
     }
-    
+
     h2 {
       font-size: 2rem;
       font-weight: 700;
       margin: 0 0 1rem 0;
-      
+
       @media (max-width: 480px) {
         font-size: 1.5rem;
       }
     }
-    
+
     p {
       font-size: 1.1rem;
       margin: 0 0 1.5rem 0;
       opacity: 0.9;
-      
+
       @media (max-width: 480px) {
         font-size: 1rem;
       }
     }
   }
-  
+
   .celebration-stats {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border-radius: 1rem;
     padding: 1rem;
-    
+
     .new-record {
       display: flex;
       align-items: center;
@@ -763,41 +804,41 @@ $card-border-radius: 12px;
       gap: 0.5rem;
       color: #ffd700;
       font-weight: 600;
-      
+
       i {
         font-size: 1.2rem;
       }
     }
   }
-  
+
   .confetti {
     position: absolute;
     width: 10px;
     height: 10px;
     background: #ffd700;
-    
+
     &:nth-child(odd) {
       background: #ff6b6b;
     }
-    
+
     &:nth-child(3n) {
       background: #4ecdc4;
     }
-    
+
     &:nth-child(4n) {
       background: #45b7d1;
     }
-    
+
     &:nth-child(5n) {
       background: #96ceb4;
     }
-    
+
     animation: confetti 3s linear infinite;
-    
+
     @for $i from 1 through 10 {
       &:nth-child(#{$i + 1}) {
-        left: #{$i * 10}%;
-        animation-delay: #{$i * 0.1}s;
+        left: #{$i * 10%};
+        animation-delay: #{$i * 0.1s};
       }
     }
   }
@@ -811,7 +852,7 @@ $card-border-radius: 12px;
   padding: 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  
+
   .modal-icon {
     width: 3rem;
     height: 3rem;
@@ -821,12 +862,12 @@ $card-border-radius: 12px;
     justify-content: center;
     font-size: 1.2rem;
     color: white;
-    
+
     &.warning-icon {
       background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
     }
   }
-  
+
   .modal-title {
     flex: 1;
     font-size: 1.25rem;
@@ -834,7 +875,7 @@ $card-border-radius: 12px;
     color: $dark-color;
     margin: 0;
   }
-  
+
   .modern-close-btn {
     width: 2rem;
     height: 2rem;
@@ -847,7 +888,7 @@ $card-border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
     color: #6b7280;
-    
+
     &:hover {
       background: #f3f4f6;
       color: $dark-color;
@@ -857,7 +898,7 @@ $card-border-radius: 12px;
 
 .modern-modal-body {
   padding: 1.5rem;
-  
+
   .warning-text {
     display: flex;
     align-items: center;
@@ -865,44 +906,44 @@ $card-border-radius: 12px;
     color: #6b7280;
     font-size: 1rem;
     margin: 0 0 1.5rem 0;
-    
+
     i {
       color: $primary-color;
       font-size: 1.1rem;
     }
   }
-  
+
   .current-progress {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 0.75rem;
     padding: 1rem;
-    
+
     .progress-info {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 0.75rem;
-      
+
       .progress-label {
         font-size: 0.9rem;
         color: #6b7280;
       }
-      
+
       .progress-value {
         font-size: 0.9rem;
         font-weight: 600;
         color: $dark-color;
       }
     }
-    
+
     .progress-bar-container {
       width: 100%;
       height: 6px;
       background: #e5e7eb;
       border-radius: 3px;
       overflow: hidden;
-      
+
       .progress-bar {
         height: 100%;
         background: linear-gradient(90deg, $success-color 0%, #059669 100%);
@@ -918,11 +959,11 @@ $card-border-radius: 12px;
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
-  
+
   @media (max-width: 480px) {
     flex-direction: column-reverse;
   }
-  
+
   .btn {
     border: none;
     border-radius: 0.75rem;
@@ -934,21 +975,21 @@ $card-border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    
+
     &.secondary-btn {
       background: #f3f4f6;
       color: #6b7280;
-      
+
       &:hover {
         background: #e5e7eb;
         color: $dark-color;
       }
     }
-    
+
     &.primary-btn {
       background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       color: white;
-      
+
       &:hover {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
@@ -961,23 +1002,23 @@ $card-border-radius: 12px;
 @media (max-width: 480px) {
   .game-header {
     padding: 0.75rem;
-    
+
     .stats-row {
       grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .game-controls {
       .control-btn {
         padding: 0.5rem 0.75rem;
         font-size: 0.8rem;
-        
+
         span {
           display: none;
         }
       }
     }
   }
-  
+
   .game-board-container {
     padding: 0.5rem;
   }

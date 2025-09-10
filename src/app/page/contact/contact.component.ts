@@ -8,9 +8,7 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactComponent {
-
-  public constructor() { }
+  public constructor() {}
 
   // ngOnInit removed as it was empty
-
 }

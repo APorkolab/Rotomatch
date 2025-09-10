@@ -56,7 +56,7 @@
           <i class="fas fa-trophy"></i>
         </div>
         <div class="stat-content">
-          <div class="stat-value">{{ getBestScoreForCurrentDeck() || "--" }}</div>
+          <div class="stat-value">{{ getBestScoreForCurrentDeck() || '--' }}</div>
           <div class="stat-label">Best</div>
         </div>
       </div>
@@ -64,28 +64,27 @@
 
     <!-- Game Controls -->
     <div class="game-controls">
-      <button 
+      <button
         class="control-btn pause-btn"
         [disabled]="!isGameActive()"
         (click)="togglePause()"
-        [attr.aria-label]="isPaused() ? 'Resume game' : 'Pause game'">
+        [attr.aria-label]="isPaused() ? 'Resume game' : 'Pause game'"
+      >
         <i [class]="isPaused() ? 'fas fa-play' : 'fas fa-pause'"></i>
         <span>{{ isPaused() ? 'Resume' : 'Pause' }}</span>
       </button>
 
-      <button 
+      <button
         class="control-btn restart-btn"
         (click)="openModal(confirmModal)"
         [disabled]="isProcessing()"
-        aria-label="Restart game">
+        aria-label="Restart game"
+      >
         <i class="fas fa-redo-alt"></i>
         <span>Restart</span>
       </button>
 
-      <button 
-        class="control-btn menu-btn"
-        routerLink="/"
-        aria-label="Back to menu">
+      <button class="control-btn menu-btn" routerLink="/" aria-label="Back to menu">
         <i class="fas fa-home"></i>
         <span>Menu</span>
       </button>
@@ -102,8 +101,8 @@
         class="card-container"
         *ngFor="let card of cards(); trackBy: trackByCardId; let i = index"
         [style.animation-delay]="i * 50 + 'ms'"
-        [class.animate-in]="shouldAnimateCardIn(i)">
-        
+        [class.animate-in]="shouldAnimateCardIn(i)"
+      >
         <div
           class="card-flipper"
           [class.flipped]="card.flipped"
@@ -116,8 +115,8 @@
           role="button"
           tabindex="0"
           [attr.aria-pressed]="card.flipped"
-          [attr.aria-label]="getCardAriaLabel(card)">
-          
+          [attr.aria-label]="getCardAriaLabel(card)"
+        >
           <!-- Card Back (face up - shows image) -->
           <div class="card card-back">
             <div class="card-content">
@@ -126,18 +125,17 @@
                 [alt]="card.name || 'card icon'"
                 class="card-image"
                 draggable="false"
-                loading="lazy" />
+                loading="lazy"
+              />
               <div class="card-name">{{ card.name }}</div>
             </div>
             <div class="card-shine"></div>
           </div>
 
           <!-- Card Front (face down) -->
-          <div 
-            class="card card-front" 
-            [style.background]="getCardFrontGradient(card)">
+          <div class="card card-front" [style.background]="getCardFrontGradient(card)">
             <div class="card-pattern">
-              <div class="pattern-circle" *ngFor="let circle of [1,2,3,4,5,6]; trackBy: trackByIndex"></div>
+              <div class="pattern-circle" *ngFor="let circle of [1, 2, 3, 4, 5, 6]; trackBy: trackByIndex"></div>
             </div>
             <div class="card-logo">
               <i class="fas fa-puzzle-piece"></i>
@@ -191,7 +189,7 @@
         </div>
       </div>
     </div>
-    <div class="confetti" *ngFor="let confetti of [1,2,3,4,5,6,7,8,9,10]; trackBy: trackByIndex"></div>
+    <div class="confetti" *ngFor="let confetti of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; trackBy: trackByIndex"></div>
   </div>
 </div>
 
@@ -202,11 +200,7 @@
       <i class="fas fa-exclamation-triangle"></i>
     </div>
     <h4 class="modal-title">Restart Game?</h4>
-    <button
-      type="button"
-      class="btn-close modern-close-btn"
-      aria-label="Close"
-      (click)="modalRef?.hide()">
+    <button type="button" class="btn-close modern-close-btn" aria-label="Close" (click)="modalRef?.hide()">
       <i class="fas fa-times"></i>
     </button>
   </div>
@@ -216,7 +210,7 @@
       <i class="fas fa-info-circle"></i>
       Your current progress will be lost if you start a new game.
     </p>
-    
+
     <div class="current-progress" *ngIf="gameProgress() > 0">
       <div class="progress-info">
         <span class="progress-label">Current Progress:</span>
@@ -229,17 +223,11 @@
   </div>
 
   <div class="modal-footer modern-modal-footer">
-    <button 
-      type="button" 
-      class="btn secondary-btn" 
-      (click)="modalRef?.hide()">
+    <button type="button" class="btn secondary-btn" (click)="modalRef?.hide()">
       <i class="fas fa-arrow-left"></i>
       <span>Continue Playing</span>
     </button>
-    <button 
-      type="button" 
-      class="btn primary-btn restart-confirm-btn" 
-      (click)="restartGame()">
+    <button type="button" class="btn primary-btn restart-confirm-btn" (click)="restartGame()">
       <i class="fas fa-redo-alt"></i>
       <span>Start New Game</span>
     </button>

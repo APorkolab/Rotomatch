@@ -6,14 +6,13 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class GameStateService {
-
   private readonly selectedDeckSize = new BehaviorSubject<number>(0);
   public currentSelectedDeckSize = this.selectedDeckSize.asObservable();
 
   private readonly newGameWanted = new BehaviorSubject<boolean>(false);
   public currentNewGameWanted = this.newGameWanted.asObservable();
 
-  public constructor(private readonly message: NotificationService) { }
+  public constructor(private readonly message: NotificationService) {}
 
   public changeSelectedDeckSize(value: number): void {
     this.selectedDeckSize.next(value);
@@ -36,5 +35,4 @@ export class GameStateService {
     }
     return numeric;
   }
-
 }

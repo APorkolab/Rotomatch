@@ -49,10 +49,12 @@ export class GameStateManagerService {
   });
 
   public readonly canFlipCard = computed(() => {
-    return !this._isProcessing() &&
-           this._gameState() === GameState.PLAYING &&
-           !this._isPaused() &&
-           this._flippedCards().length < 2;
+    return (
+      !this._isProcessing() &&
+      this._gameState() === GameState.PLAYING &&
+      !this._isPaused() &&
+      this._flippedCards().length < 2
+    );
   });
 
   public readonly isGameActive = computed(() => {
@@ -125,7 +127,6 @@ export class GameStateManagerService {
       this._gameState.set(GameState.IDLE);
       this._gameTimer.set(0);
       this._isPaused.set(false);
-
     } catch (error) {
       this.errorHandler.createError(
         ErrorCode.CONFIGURATION_ERROR,
@@ -141,10 +142,7 @@ export class GameStateManagerService {
   public startGame(cards: Card[]): void {
     const session = this._currentSession();
     if (!session) {
-      this.errorHandler.createError(
-        ErrorCode.INVALID_GAME_STATE,
-        'Cannot start game without initialized session'
-      );
+      this.errorHandler.createError(ErrorCode.INVALID_GAME_STATE, 'Cannot start game without initialized session');
       return;
     }
 
@@ -189,10 +187,7 @@ export class GameStateManagerService {
     const cardIndex = cards.findIndex(c => c.id === cardId);
 
     if (cardIndex === -1) {
-      this.errorHandler.createError(
-        ErrorCode.INVALID_GAME_STATE,
-        'Card not found'
-      );
+      this.errorHandler.createError(ErrorCode.INVALID_GAME_STATE, 'Card not found');
       return;
     }
 
@@ -366,13 +361,13 @@ export class GameStateManagerService {
   private startTimer(): void {
     this.stopTimer();
 
-    interval(1000).pipe(
-      takeUntil(this.timerDestroy$)
-    ).subscribe(() => {
-      if (!this._isPaused() && this._gameState() === GameState.PLAYING) {
-        this._gameTimer.set(this._gameTimer() + 1);
-      }
-    });
+    interval(1000)
+      .pipe(takeUntil(this.timerDestroy$))
+      .subscribe(() => {
+        if (!this._isPaused() && this._gameState() === GameState.PLAYING) {
+          this._gameTimer.set(this._gameTimer() + 1);
+        }
+      });
   }
 
   private pauseTimer(): void {
@@ -434,11 +429,15 @@ export class GameStateManagerService {
     if (session?.settings?.autoSave === true) {
       const storageKey = this.configService.getStorageConfig().gameStateKey;
       this.errorHandler.safeStorageOperation(
-        () => localStorage.setItem(storageKey, JSON.stringify({
-          session,
-          gameTimer: this._gameTimer(),
-          isPaused: this._isPaused()
-        })),
+        () =>
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              session,
+              gameTimer: this._gameTimer(),
+              isPaused: this._isPaused()
+            })
+          ),
         undefined,
         'Failed to save game state'
       );
@@ -510,11 +509,11 @@ export class GameStateManagerService {
     );
 
     try {
-      const bestScores: IBestScores = JSON.parse(currentBest);
+      const bestScores: IBestScores = (currentBest != null && currentBest.length > 0) ? JSON.parse(currentBest) : {};
       const deckSize = stats.deckSize;
       const currentAttempts = stats.attempts;
-      const gameTime = (stats.endTime != null && stats.startTime != null) ?
-        stats.endTime.getTime() - stats.startTime.getTime() : 0;
+      const gameTime =
+        stats.endTime != null && stats.startTime != null ? stats.endTime.getTime() - stats.startTime.getTime() : 0;
 
       if (bestScores[deckSize] == null || currentAttempts < bestScores[deckSize].attempts) {
         bestScores[deckSize] = {
@@ -548,7 +547,7 @@ export class GameStateManagerService {
     );
 
     try {
-      return JSON.parse(savedScores);
+      return (savedScores != null && savedScores.length > 0) ? JSON.parse(savedScores) : {};
     } catch {
       return {};
     }

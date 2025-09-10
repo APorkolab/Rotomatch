@@ -3,7 +3,7 @@ import { Observable, throwError, of } from 'rxjs';
 import { retryWhen, mergeMap } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { IGameError } from '../types/game.types';
-import { NotificationService } from './notification.service';
+import { NotificationService } from '../service/notification.service';
 import { ConfigService } from './config.service';
 
 export enum ErrorCode {
@@ -12,7 +12,7 @@ export enum ErrorCode {
   STORAGE_ERROR = 'STORAGE_ERROR',
   INVALID_GAME_STATE = 'INVALID_GAME_STATE',
   CONFIGURATION_ERROR = 'CONFIGURATION_ERROR',
-  UNEXPECTED_ERROR = 'UNEXPECTED_ERROR'
+  UNEXPECTED_ERROR = 'UNEXPECTED_ERROR',
 }
 
 @Injectable({
@@ -30,11 +30,7 @@ export class ErrorHandlerService {
   /**
    * Creates a standardized error object
    */
-  public createError(
-    code: ErrorCode,
-    message: string,
-    details?: string
-  ): IGameError {
+  public createError(code: ErrorCode, message: string, details?: string): IGameError {
     const error: IGameError = {
       code,
       message,
@@ -49,11 +45,7 @@ export class ErrorHandlerService {
   /**
    * Handles HTTP errors with retry logic
    */
-  public handleHttpError<T>(
-    source: Observable<T>,
-    fallback?: T,
-    showNotification: boolean = true
-  ): Observable<T> {
+  public handleHttpError<T>(source: Observable<T>, fallback?: T, showNotification: boolean = true): Observable<T> {
     const retryAttempts = this.configService.getApiConfig().retryAttempts;
 
     return source.pipe(
@@ -88,11 +80,7 @@ export class ErrorHandlerService {
   /**
    * Handles storage operations safely
    */
-  public safeStorageOperation<T>(
-    operation: () => T,
-    fallback: T,
-    errorMessage: string
-  ): T {
+  public safeStorageOperation<T>(operation: () => T, fallback: T, errorMessage: string): T {
     try {
       return operation();
     } catch (error) {
@@ -110,20 +98,13 @@ export class ErrorHandlerService {
   /**
    * Validates game state and handles invalid states
    */
-  public validateGameState<T>(
-    validator: () => boolean,
-    errorMessage: string,
-    recovery: () => T
-  ): T | null {
+  public validateGameState<T>(validator: () => boolean, errorMessage: string, recovery: () => T): T | null {
     try {
       if (validator()) {
         return null; // Valid state
       }
 
-      const error = this.createError(
-        ErrorCode.INVALID_GAME_STATE,
-        errorMessage
-      );
+      const error = this.createError(ErrorCode.INVALID_GAME_STATE, errorMessage);
 
       this.showErrorNotification(error, false);
       return recovery();

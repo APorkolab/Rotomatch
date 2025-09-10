@@ -4,20 +4,20 @@ export enum GameState {
   PLAYING = 'playing',
   PAUSED = 'paused',
   WON = 'won',
-  LOADING = 'loading'
+  LOADING = 'loading',
 }
 
 export enum GameDifficulty {
   EASY = 'easy',
   MEDIUM = 'medium',
-  HARD = 'hard'
+  HARD = 'hard',
 }
 
 export enum CardState {
   FACE_DOWN = 'face_down',
   FACE_UP = 'face_up',
   MATCHED = 'matched',
-  ANIMATING = 'animating'
+  ANIMATING = 'animating',
 }
 
 // Core interfaces
@@ -127,7 +127,7 @@ export type ErrorHandler = (error: IGameError) => void;
 
 // Constants
 export const DECK_SIZE_OPTIONS = [4, 6, 8, 10, 12, 14, 16, 18, 20] as const;
-export type DeckSize = typeof DECK_SIZE_OPTIONS[number];
+export type DeckSize = (typeof DECK_SIZE_OPTIONS)[number];
 
 export const THEMES = ['default', 'dark', 'colorful', 'minimal'] as const;
-export type Theme = typeof THEMES[number];
+export type Theme = (typeof THEMES)[number];

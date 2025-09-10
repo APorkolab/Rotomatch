@@ -3,6 +3,7 @@ import { GameComponent } from './game.component';
 import { GameStateService } from 'src/app/service/game-state.service';
 import { GameLogicService } from 'src/app/service/game-logic.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { Card } from 'src/app/model/card';
 import { of, Subject } from 'rxjs';
 
 describe('GameComponent', () => {
@@ -28,14 +29,13 @@ describe('GameComponent', () => {
     const modalSpy = jasmine.createSpyObj('BsModalService', ['show']);
 
     await TestBed.configureTestingModule({
-      imports: [ GameComponent ],
+      imports: [GameComponent],
       providers: [
         { provide: GameLogicService, useValue: gameLogicSpy },
         { provide: GameStateService, useValue: gameStateSpy },
         { provide: BsModalService, useValue: modalSpy }
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     gameLogicService = TestBed.inject(GameLogicService) as jasmine.SpyObj<GameLogicService>;
     modalService = TestBed.inject(BsModalService) as jasmine.SpyObj<BsModalService>;
@@ -56,7 +56,7 @@ describe('GameComponent', () => {
   });
 
   it('should call revealCard on the service when a card is clicked', () => {
-    const testCard = { id: 1, name: 'A', icon: '', flipped: false, matched: false };
+    const testCard = new Card({ id: 1, name: 'A', icon: '', flipped: false, matched: false });
     component.revealCard(testCard);
     void expect(gameLogicService.revealCard).toHaveBeenCalledWith(testCard);
   });
