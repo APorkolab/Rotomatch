@@ -110,7 +110,9 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Loads user statistics for display
    */
   private loadUserStatistics(): void {
-    const stats = this.achievementsService.getDetailedStats() as { overview?: { totalGames?: number; totalWins?: number; winRate?: number } };
+    const stats = this.achievementsService.getDetailedStats() as {
+      overview?: { totalGames?: number; totalWins?: number; winRate?: number };
+    };
 
     this.hasGameHistory = (stats?.overview?.totalGames ?? 0) > 0;
     this.totalWins = stats?.overview?.totalWins ?? 0;

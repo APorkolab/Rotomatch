@@ -200,11 +200,11 @@ export class GameLogicService implements OnDestroy {
 
   // Observable properties that components expect
   public readonly cardList$ = toObservable(this.gameStateManager.cards).pipe(
-    map(cards => cards || [])
+    map(cards => cards ?? [])
   );
 
   public readonly score$ = toObservable(this.gameStateManager.currentStats).pipe(
-    map(stats => stats?.attempts || 0)
+    map(stats => (stats?.attempts != null && stats.attempts > 0) ? stats.attempts : 0)
   );
 
   public readonly isProcessing$ = toObservable(this.gameStateManager.isProcessing);
