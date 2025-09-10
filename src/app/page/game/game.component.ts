@@ -6,14 +6,24 @@ import { GameLogicService } from 'src/app/service/game-logic.service';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
   standalone: true,
-  imports: [CommonModule],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [CommonModule, RouterModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('celebrationAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'scale(0.8)' }),
+        animate('300ms ease-in', style({ opacity: 1, transform: 'scale(1)' }))
+      ])
+    ])
+  ]
 })
 export class GameComponent implements OnInit, OnDestroy {
   public deckSize = 0;
@@ -72,7 +82,10 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   public getBestScoreForCurrentDeck(): number {
-    return this.bestResults[this.deckSize] || 0;
+    if (this.bestResults == null || this.deckSize <= 0) {
+      return 0;
+    }
+    return this.bestResults[this.deckSize] ?? 0;
   }
 
   public restartGame(): void {
@@ -99,4 +112,113 @@ export class GameComponent implements OnInit, OnDestroy {
     // Placeholder method for template compatibility
     return 'game-active';
   }
+
+  public getStatusIcon(): string {
+    return 'fas fa-gamepad';
+  }
+
+  public getStatusTitle(): string {
+    return 'Memory Game';
+  }
+
+  public getStatusSubtitle(): string {
+    return 'Match all cards to win!';
+  }
+
+  public gameTimer(): number {
+    return 0; // TODO: Implement timer
+  }
+
+  public isGameActive(): boolean {
+    return true; // TODO: Implement game state
+  }
+
+  public formatTime(time: number): string {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  public currentAttempts(): number {
+    // This will come from the score observable
+    let currentScore = 0;
+    this.score$.subscribe(score => (currentScore = score)).unsubscribe();
+    return currentScore;
+  }
+
+  public gameProgress(): number {
+    // Calculate progress based on matched cards
+    let cards: Card[] = [];
+    this.cardList$.subscribe(cardList => (cards = cardList)).unsubscribe();
+    if (cards.length === 0) return 0;
+    const matchedCards = cards.filter(card => card.matched).length;
+    return (matchedCards / cards.length) * 100;
+  }
+
+  public getProgressRingColor(): string {
+    const progress = this.gameProgress();
+    if (progress < 30) return '#ff6b6b';
+    if (progress < 70) return '#feca57';
+    return '#48dbfb';
+  }
+
+  public isPaused(): boolean {
+    return false; // TODO: Implement pause functionality
+  }
+
+  public togglePause(): void {
+    // TODO: Implement pause functionality
+  }
+
+  public isProcessing(): boolean {
+    let processing = false;
+    this.isProcessing$.subscribe(isProc => (processing = isProc)).unsubscribe();
+    return processing;
+  }
+
+  public cards(): Card[] {
+    let cardList: Card[] = [];
+    this.cardList$.subscribe(cards => (cardList = cards)).unsubscribe();
+    return cardList;
+  }
+
+  public shouldAnimateCardIn(_index: number): boolean {
+    return true; // Simple animation trigger
+  }
+
+  public isCardBeingProcessed(card: Card): boolean {
+    return card.flipped && !card.matched;
+  }
+
+  public canFlipCard(): boolean {
+    return !this.isProcessing();
+  }
+
+  public getCardAriaLabel(card: Card): string {
+    if (card.flipped) {
+      return `Card ${card.name}, revealed`;
+    }
+    return `Card ${card.id}, hidden`;
+  }
+
+  public getCardFrontGradient(card: Card): string {
+    // Generate a subtle gradient based on card ID
+    const cardIdNum = typeof card.id === 'string' ? parseInt(card.id, 10) || 1 : card.id;
+    const hue = (cardIdNum * 137) % 360;
+    return `linear-gradient(135deg, hsl(${hue}, 20%, 25%), hsl(${hue}, 25%, 35%))`;
+  }
+
+  public isGameWon(): boolean {
+    const cards = this.cards();
+    return cards.length > 0 && cards.every(card => card.matched);
+  }
+
+  public isNewBestScore(): boolean {
+    const current = this.currentAttempts();
+    const best = this.getBestScoreForCurrentDeck();
+    return best === 0 || current < best;
+  }
+
+  // Make Math available in template
+  public Math = Math;
 }
