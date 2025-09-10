@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { GameStateService } from 'src/app/service/game-state.service';
 import { HomeComponent } from './home.component';
 
@@ -14,7 +15,7 @@ describe('HomeComponent', () => {
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      imports: [HomeComponent],
+      imports: [HomeComponent, HttpClientTestingModule],
       providers: [
         { provide: GameStateService, useValue: gameStateSpy },
         { provide: Router, useValue: routerSpy }

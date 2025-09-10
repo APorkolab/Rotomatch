@@ -94,4 +94,9 @@ export class GameComponent implements OnInit, OnDestroy {
   public trackByIndex(index: number): number {
     return index;
   }
+
+  public getGameStatusClass(): string {
+    // Placeholder method for template compatibility
+    return 'game-active';
+  }
 }
