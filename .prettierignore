@@ -9,6 +9,7 @@ coverage/
 # Configuration files
 *.config.js
 *.config.cjs
+lighthouserc.cjs
 
 # Test setup files
 src/test.ts
