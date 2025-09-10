@@ -4,8 +4,12 @@ import angularTemplate from '@angular-eslint/eslint-plugin-template';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import angularTemplateParser from '@angular-eslint/template-parser';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
+  {
+    ignores: ['coverage/**', 'dist/**', '**/*.d.ts']
+  },
   {
     files: ['**/*.ts'],
     languageOptions: {
@@ -73,7 +77,7 @@ export default [
       'comma-dangle': ['error', 'never'],
       'quotes': ['error', 'single', { avoidEscape: true }],
       'semi': ['error', 'always'],
-      'indent': ['error', 2, { SwitchCase: 1 }],
+      // 'indent': ['error', 2, { SwitchCase: 1 }], // Disabled to avoid conflict with Prettier
       'max-len': ['error', { code: 120, ignoreUrls: true }],
       'no-multiple-empty-lines': ['error', { max: 2, maxEOF: 1 }],
       'eol-last': ['error', 'always'],
@@ -139,4 +143,6 @@ export default [
       'no-magic-numbers': 'off',
     },
   },
+  // Prettier compatibility - must be last
+  prettierConfig,
 ];
