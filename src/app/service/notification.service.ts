@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastrService, IndividualConfig } from 'ngx-toastr';
+import { ToastService, ToastOptions } from '../service/toast.service';
 
 interface NotificationConfig {
   timeout?: number;
@@ -13,13 +13,13 @@ interface NotificationConfig {
   providedIn: 'root'
 })
 export class NotificationService {
-  private readonly defaultConfig: Partial<IndividualConfig> = {
+  private readonly defaultConfig: Partial<ToastOptions> = {
     timeOut: 5000,
     closeButton: true,
     progressBar: true
   };
 
-  public constructor(private readonly toastr: ToastrService) {}
+  public constructor(private readonly toastr: ToastService) {}
 
   public showSuccess(message: string, title: string = 'Success', config?: NotificationConfig): void {
     const options = this.buildConfig(config);
@@ -106,8 +106,8 @@ export class NotificationService {
   /**
    * Builds notification configuration
    */
-  private buildConfig(config?: NotificationConfig): Partial<IndividualConfig> {
-    const options: Partial<IndividualConfig> = {
+  private buildConfig(config?: NotificationConfig): Partial<ToastOptions> {
+    const options: Partial<ToastOptions> = {
       ...this.defaultConfig,
       timeOut: config?.timeout ?? this.defaultConfig.timeOut,
       closeButton: config?.closeButton ?? this.defaultConfig.closeButton,

@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { ToastrModule } from 'ngx-toastr';
 
 import { GameStateService } from './game-state.service';
 
@@ -8,7 +7,7 @@ describe('GameStateService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ToastrModule.forRoot()]
+      imports: []
     });
     service = TestBed.inject(GameStateService);
   });

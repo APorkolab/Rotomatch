@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ToastrModule } from 'ngx-toastr';
 import { GameLogicService } from './game-logic.service';
 import { GameStateService } from './game-state.service';
 import { NotificationService } from './notification.service';
@@ -30,7 +29,7 @@ describe('GameLogicService', () => {
     const gameStateSpy = jasmine.createSpyObj('GameStateService', ['changeNewGameWanted']);
 
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, ToastrModule.forRoot()],
+      imports: [HttpClientTestingModule, RouterTestingModule,],
       providers: [
         GameLogicService,
         { provide: NotificationService, useValue: notificationSpy },

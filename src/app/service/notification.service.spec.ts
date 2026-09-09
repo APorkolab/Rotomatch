@@ -1,18 +1,18 @@
 import { TestBed } from '@angular/core/testing';
-import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { ToastService } from '../service/toast.service';
 
 import { NotificationService } from './notification.service';
 
 describe('NotificationService', () => {
   let service: NotificationService;
-  let toastr: ToastrService;
+  let toastr: ToastService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [ToastrModule.forRoot({ positionClass: 'toast-top-center' })]
+      imports: []
     });
     service = TestBed.inject(NotificationService);
-    toastr = TestBed.inject(ToastrService);
+    toastr = TestBed.inject(ToastService);
   });
 
   it('should be created', () => {
